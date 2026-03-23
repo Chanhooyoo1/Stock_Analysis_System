@@ -83,22 +83,11 @@ def get_stock_news():
 
 with st.sidebar:
     st.divider()
-    st.subheader("Latest News")
+    st.subheader("관련 뉴스")
     news_list = get_stock_news()
     for entry in news_list:
         st.markdown(f"**[{entry.title}]({entry.link})**")
         st.caption(f"{entry.published}")
-
-# 실시간 알림 예시 (데이터 갱신 시 자동 노출)
-if selected_names:
-    st.toast("주가 데이터가 최신 상태로 업데이트되었습니다!", icon="✅")
-    
-    # 만약 특정 종목이 3% 이상 급등/급락했다면? (예시 로직)
-    # if abs(perc) >= 3.0:
-    #     st.toast(f"⚠️ {name} 변동성 주의: {perc:+.2f}%", icon="🚨")
-# --- 2. 강화된 데이터 크롤링 함수 ---
-def get_korean_stock_price(ticker):
-    try:
         # 네이버 금융 크롤링 (User-Agent 헤더 추가로 차단 방지)
         url = f"https://finance.naver.com/item/main.naver?code={ticker}"
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'}
