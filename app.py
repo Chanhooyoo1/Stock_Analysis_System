@@ -10,7 +10,7 @@ from streamlit_autorefresh import st_autorefresh
 st.set_page_config(page_title="국내-해외 주식 현황 모니터링", page_icon="📈", layout="wide")
 
 st.markdown("""
-    <style>
+   <style>
     /* 폰트 설정 (Pretendard) */
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     * { font-family: 'Pretendard', sans-serif; }
@@ -26,17 +26,19 @@ st.markdown("""
     }
     .sub-title { font-size: 18px; color: #888888; text-align: center; font-style: italic; margin-bottom: 30px; }
 
-    /* ★ 버튼 애니메이션 & 그라데이션 그림자 ★ */
+    /* ★ 버튼 애니메이션 & 그라데이션 그림자 (Red-Purple 테마) ★ */
     div.stButton > button {
         width: 100%;
         border-radius: 12px;
         border: none;
         padding: 12px 20px;
-        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        /* 빨강 -> 보라 그라데이션 */
+        background: linear-gradient(135deg, #FF4B4B 0%, #764BA2 100%); 
         color: white !important;
         font-weight: 700;
         font-size: 16px;
-        box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3); /* 푸른색 그라데이션 그림자 */
+        /* 은은한 보라색 그림자 */
+        box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4); 
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
     }
@@ -44,8 +46,10 @@ st.markdown("""
     /* 마우스 올렸을 때 (Hover) */
     div.stButton > button:hover {
         transform: translateY(-3px) scale(1.02); /* 살짝 떠오름 */
-        box-shadow: 0 8px 25px rgba(0, 114, 255, 0.5); /* 그림자 강화 */
-        background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+        /* 그림자 더 진해짐 (네온 광채) */
+        box-shadow: 0 8px 25px rgba(118, 75, 162, 0.6); 
+        /* 더 밝은 빨강-보라 그라데이션 */
+        background: linear-gradient(135deg, #FF6B6B 0%, #8A54C9 100%); 
     }
 
     /* 클릭했을 때 (Active) - 쑥 들어가는 효과 */
