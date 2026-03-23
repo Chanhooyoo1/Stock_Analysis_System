@@ -134,7 +134,10 @@ st.markdown('<p class="sub-title">𝕽𝖊𝖆𝖑-𝖙𝖎𝖒𝖊 𝕱𝖎𝖓
 # 구글 검색창
 search_q = st.text_input("", placeholder="궁금한 종목의 추세를 찾아보세요!")
 if search_q:
-    st.markdown(f"[구글에서 '{search_q주가} 주가' 검색 결과 보기](https://www.google.com/search?q={search_q})")
+    # 사용자가 입력한 검색어 뒤에 ' 주가'를 자동으로 붙임
+    refined_q = f"{search_q} 주가"
+    # 실제 구글 검색 링크 생성
+    st.markdown(f"[구글에서 **'{refined_q}'** 검색 결과 보기](https://www.google.com/search?q={refined_q})")
 
 st.divider()
 st.caption(f"마지막 업데이트 시각: {datetime.now().strftime('%H:%M:%S')}")
