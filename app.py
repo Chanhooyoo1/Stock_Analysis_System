@@ -205,54 +205,48 @@ if curr:
 if selected_names:
     cols = st.columns(len(selected_names))
     for i, name in enumerate(selected_names):
+        for i, name in enumerate(selected_names):
         info = stock_dict[name]
         with cols[i]:
-            # 가격 정보 호출
-            if info["type"] == "KR":
-                curr, prev = get_korean_stock_price(info["id"])
-            else:
-@@ -204,27 +160,37 @@
-                curr = round(hist2d['Close'].iloc[-1], 2) if not hist2d.empty else None
-                prev = round(hist2d['Close'].iloc[-2], 2) if len(hist2d) > 1 else curr
+            # 1. 가격 데이터 가져오기 (들여쓰기 12칸)
+            curr, prev = get_korean_stock_price(info["id"]) if info["type"] == "KR" else (None, None)
+            if not curr:
+                t_obj = yf.Ticker(info["id"])
+                h2d = t_obj.history(period="2d")
+                curr = h2d['Close'].iloc[-1] if not h2d.empty else None
+                prev = h2d['Close'].iloc[-2] if len(h2d) > 1 else curr
 
-            # 메트릭 표시
+            # 2. 데이터가 있을 때 차트 그리기 (들여쓰기 12칸)
             if curr:
                 diff = curr - prev
                 perc = (diff / prev * 100) if prev else 0
                 st.metric(label=name, value=f"{curr:,.2f}", delta=f"{perc:+.2f}%")
 
-                # 정밀 그래프 (Area Chart)
-                # 드라마틱 Plotly 차트
-                chart_data = yf.Ticker(info["y"]).history(period=period_map[selected_period])
+                chart_data = yf.Ticker(info["y"]).history(period="1d", interval="1m")
+                
                 if not chart_data.empty:
-                    st.area_chart(chart_data['Close'], height=200)
-                    import plotly.graph_objects as go
-                    main_color = "#FF4B4B" if diff >= 0 else "#0072ff"
+                    m_color = "#FF4B4B" if diff >= 0 else "#0072ff"
                     fig = go.Figure()
                     fig.add_trace(go.Scatter(
                         x=chart_data.index, y=chart_data['Close'],
                         fill='tozeroy', mode='lines',
-                        line=dict(width=3, color=main_color),
-                        fillcolor=f'rgba({255 if diff >= 0 else 0}, {75 if diff >= 0 else 114}, {75 if diff >= 0 else 255}, 0.1)'
+                        line=dict(width=4, color=m_color),
+                        fillcolor=f'rgba({255 if diff >= 0 else 0}, 75, 255, 0.1)'
                     ))
-                    fig.update_layout(margin=dict(l=0, r=0, t=10, b=0), height=200, template="plotly_dark",
-                                      paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                                      xaxis=dict(showgrid=False), yaxis=dict(showgrid=True, gridcolor='#333'))
+
+                    start_dt = chart_data.index[0].replace(hour=9, minute=0)
+                    end_dt = chart_data.index[0].replace(hour=15, minute=30)
+                    
+                    fig.update_layout(
+                        margin=dict(l=0, r=0, t=10, b=0), height=300,
+                        template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)',
+                        plot_bgcolor='rgba(0,0,0,0)',
+                        xaxis=dict(range=[start_dt, end_dt], showgrid=False),
+                        yaxis=dict(showgrid=True, gridcolor='#333', side="right"),
+                        hovermode="x unified"
+                    )
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+            
+            # 3. 데이터가 없을 때 에러 메시지 (위의 if curr: 와 세로 위치를 똑같이!)
             else:
-                st.error("데이터가 불러와지지 않았어요. 다시 시도해주세요.")
-                # ← 이 부분의 들여쓰기가 에러의 원인이었습니다!
-                st.error(f"{name} 데이터가 불러와지지 않았어요. 다시 시도해주세요.")
-
-st.divider()
-
-# 하단 메모장 및 수동 새로고침
-m_col1, m_col2 = st.columns([4, 1])
-with m_col1:
-    st.text_area("메모장", placeholder="텍스트를 입력하세요...", height=120)
-    st.text_area("메모장", placeholder="텍스트 입력..", height=120)
-with m_col2:
-    st.write("") 
-    st.write("") 
-    if st.button("새로고침🔄", use_container_width=True):
-        st.rerun()
+                st.error(f"{name} 수신 실패")
