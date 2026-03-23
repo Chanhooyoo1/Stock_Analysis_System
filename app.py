@@ -153,43 +153,37 @@ if selected_names:
 
                 # --- 드라마틱 풀 스팬 차트 ---
                 # 당일 1분 단위 데이터 (이미지처럼 넓은 폭 구현용)
-                chart_data = yf.Ticker(info["y"]).history(period="1d", interval="1m")
+ chart_data = yf.Ticker(info["y"]).history(period="1d", interval="1m")
                 
                 if not chart_data.empty:
                     m_color = "#FF4B4B" if diff >= 0 else "#0072ff"
                     fig = go.Figure()
+                    
+                    # 1. 선 그래프 추가
                     fig.add_trace(go.Scatter(
-                        x=chart_data.index, y=chart_data['Close'],
-                        fill='tozeroy', mode='lines',
+                        x=chart_data.index, 
+                        y=chart_data['Close'],
+                        fill='tozeroy', 
+                        mode='lines',
                         line=dict(width=4, color=m_color),
                         fillcolor=f'rgba({255 if diff >= 0 else 0}, 75, 255, 0.1)'
                     ))
 
-                    # X축 범위를 넓게 고정 (이미지처럼 오전~오후 전체 표시)
+                    # 2. X축 시간 범위 계산
                     start_dt = chart_data.index[0].replace(hour=9, minute=0)
                     end_dt = chart_data.index[0].replace(hour=15, minute=30)
                     
+                    # 3. 레이아웃 설정 (괄호 짝 확인 완료)
                     fig.update_layout(
-                        margin=dict(l=0, r=0, t=10, b=0), height=300,
-                        template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)',
+                        margin=dict(l=0, r=0, t=10, b=0), 
+                        height=300,
+                        template="plotly_dark", 
+                        paper_bgcolor='rgba(0,0,0,0)',
                         plot_bgcolor='rgba(0,0,0,0)',
                         xaxis=dict(range=[start_dt, end_dt], showgrid=False),
                         yaxis=dict(showgrid=True, gridcolor='#333', side="right"),
                         hovermode="x unified"
                     )
+                    
+                    # 4. 차트 출력
                     st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-            else:
-                st.error(f"{name} 불러오기에 실패했어요. 다시 시도 해 주세요.")
-    )
-    
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-
-st.divider()
-m_col1, m_col2 = st.columns([4, 1])
-with m_col1:
-    st.text_area("메모장", placeholder="텍스트 입력..", height=120)
-with m_col2:
-    st.write("") 
-    st.write("") 
-    if st.button("새로고침🔄", use_container_width=True):
-        st.rerun()
