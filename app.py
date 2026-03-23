@@ -73,6 +73,29 @@ st.markdown("""
 # 30초 자동 새로고침 설정
 st_autorefresh(interval=30000, key="auto_refresh_key")
 
+import feedparser
+
+def get_stock_news():
+    # 예시: 구글 뉴스 RSS (주식 키워드)
+    rss_url = "https://news.google.com/rss/search?q=주식+시장&hl=ko&gl=KR&ceid=KR:ko"
+    feed = feedparser.parse(rss_url)
+    return feed.entries[:5]  # 최신 뉴스 5개만 반환
+
+with st.sidebar:
+    st.divider()
+    st.subheader("Latest News")
+    news_list = get_stock_news()
+    for entry in news_list:
+        st.markdown(f"**[{entry.title}]({entry.link})**")
+        st.caption(f"{entry.published}")
+
+# 실시간 알림 예시 (데이터 갱신 시 자동 노출)
+if selected_names:
+    st.toast("주가 데이터가 최신 상태로 업데이트되었습니다!", icon="✅")
+    
+    # 만약 특정 종목이 3% 이상 급등/급락했다면? (예시 로직)
+    # if abs(perc) >= 3.0:
+    #     st.toast(f"⚠️ {name} 변동성 주의: {perc:+.2f}%", icon="🚨")
 # --- 2. 강화된 데이터 크롤링 함수 ---
 def get_korean_stock_price(ticker):
     try:
