@@ -128,74 +128,30 @@ with st.sidebar:
     if st.button("새로고침 (수동)", use_container_width=True):
         st.rerun()
 
-# --- 4. 메인 화면 구성 ---
+# --- 4. 메인 화면 --- (이 아래부터 끝까지 덮어쓰세요)
 st.markdown('<p class="main-title">주식 추세 일람 그래프</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">𝕽𝖊𝖆𝖑-𝖙𝖎𝖒𝖊 𝕱𝖎𝖓𝖆𝖓𝖈𝖎𝖆𝖑 𝕸𝖔𝖓𝖎𝖙𝖔𝖗𝖎𝖓𝖌 𝕾𝖞𝖘𝖙𝖊𝖒</p>', unsafe_allow_html=True)
 
-# 구글 검색창
-user_input = st.text_input("종목명 입력") 
-
-if user_input:
-    # 2. 뒤에 공백 하나와 '주가'를 강제로 붙여버립니다.
-    magic_keyword = user_input + " 주가" 
-    
-    # 3. 버튼을 누르면 이 'magic_keyword'가 검색어로 날아갑니다!
-    st.link_button("네이버에서 검색", f"https://search.naver.com/search.naver?query={magic_keyword}")
+# 검색창 섹션
+search_q = st.text_input("", placeholder="알아보고 싶은 종목명을 입력해주세요.")
+if search_q:
+    refined_q = f"{search_q} 주가"
+    s_col1, s_col2, s_col3 = st.columns(3)
+    with s_col1:
+        st.link_button("🌐 Google", f"https://www.google.com/search?q={refined_q}", use_container_width=True)
+    with s_col2:
+        st.link_button("네이버", f"https://search.naver.com/search.naver?query={refined_q}", use_container_width=True)
+    with s_col3:
+        st.link_button("다음", f"https://search.daum.net/search?q={refined_q}", use_container_width=True)
 
 st.divider()
-st.caption(f"마지막 업데이트 시각: {datetime.now().strftime('%H:%M:%S')}")
 
-if curr:
-                diff = curr - prev
-                perc = (diff / prev * 100) if prev else 0
-                st.metric(label=name, value=f"{curr:,.2f}", delta=f"{perc:+.2f}%")
-                
-                # --- 드라마틱한 Plotly 차트 생성 (오류 수정본) ---
-                chart_data = yf.Ticker(info["y"]).history(period=period_map[selected_period])
-                
-                if not chart_data.empty:
-                    # 상승/하락에 따른 메인 색상 결정 (사용자님의 빨강-보라 테마 반영)
-                    main_color = "#FF4B4B" if diff >= 0 else "#0072ff"
-                    
-                    import plotly.graph_objects as go
-                    fig = go.Figure()
-
-                    # 1. 부드러운 영역 차트 (그라데이션 효과)
-                    fig.add_trace(go.Scatter(
-                        x=chart_data.index, 
-                        y=chart_data['Close'],
-                        fill='tozeroy',
-                        mode='lines',
-                        line=dict(width=3, color=main_color),
-                        # 아래쪽을 투명하게 채움
-                        fillcolor=f'rgba({255 if diff >= 0 else 0}, {75 if diff >= 0 else 114}, {75 if diff >= 0 else 255}, 0.1)',
-                        name="가격"
-                    ))
-
-                    # 2. 레이아웃 설정 (다크모드 & 드라마틱 스타일)
-                    fig.update_layout(
-                        margin=dict(l=0, r=0, t=10, b=0),
-                        height=250,
-                        template="plotly_dark",
-                        paper_bgcolor='rgba(0,0,0,0)',
-                        plot_bgcolor='rgba(0,0,0,0)',
-                        xaxis=dict(showgrid=False),
-                        yaxis=dict(showgrid=True, gridcolor='#333'),
-                        hovermode="x unified"
-                    )
-                    
-                    # ★ 괄호 닫기 완벽 확인 ★
-                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-            else:
-                st.error(f"{name} 데이터 수신 불가") 
-                                                               
 # 종목 카드 및 그래프 레이아웃
 if selected_names:
     cols = st.columns(len(selected_names))
     for i, name in enumerate(selected_names):
         info = stock_dict[name]
         with cols[i]:
-            # 가격 정보 호출
             if info["type"] == "KR":
                 curr, prev = get_korean_stock_price(info["id"])
             else:
@@ -204,25 +160,35 @@ if selected_names:
                 curr = round(hist2d['Close'].iloc[-1], 2) if not hist2d.empty else None
                 prev = round(hist2d['Close'].iloc[-2], 2) if len(hist2d) > 1 else curr
             
-            # 메트릭 표시
             if curr:
                 diff = curr - prev
                 perc = (diff / prev * 100) if prev else 0
                 st.metric(label=name, value=f"{curr:,.2f}", delta=f"{perc:+.2f}%")
                 
-                # 정밀 그래프 (Area Chart)
+                # 드라마틱 Plotly 차트
                 chart_data = yf.Ticker(info["y"]).history(period=period_map[selected_period])
                 if not chart_data.empty:
-                    st.area_chart(chart_data['Close'], height=200)
+                    import plotly.graph_objects as go
+                    main_color = "#FF4B4B" if diff >= 0 else "#0072ff"
+                    fig = go.Figure()
+                    fig.add_trace(go.Scatter(
+                        x=chart_data.index, y=chart_data['Close'],
+                        fill='tozeroy', mode='lines',
+                        line=dict(width=3, color=main_color),
+                        fillcolor=f'rgba({255 if diff >= 0 else 0}, {75 if diff >= 0 else 114}, {75 if diff >= 0 else 255}, 0.1)'
+                    ))
+                    fig.update_layout(margin=dict(l=0, r=0, t=10, b=0), height=200, template="plotly_dark",
+                                      paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                                      xaxis=dict(showgrid=False), yaxis=dict(showgrid=True, gridcolor='#333'))
+                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
             else:
-                st.error("데이터가 불러와지지 않았어요. 다시 시도해주세요.")
+                # ← 이 부분의 들여쓰기가 에러의 원인이었습니다!
+                st.error(f"{name} 수신 불가")
 
 st.divider()
-
-# 하단 메모장 및 수동 새로고침
 m_col1, m_col2 = st.columns([4, 1])
 with m_col1:
-    st.text_area("메모장", placeholder="텍스트를 입력하세요...", height=120)
+    st.text_area("메모장", placeholder="텍스트 입력..", height=120)
 with m_col2:
     st.write("") 
     st.write("") 
