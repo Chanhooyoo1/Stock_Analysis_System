@@ -1,3 +1,4 @@
+import plotly.graph_objects as go
 import streamlit as st
 import yfinance as yf
 import pandas as pd
@@ -144,6 +145,45 @@ if user_input:
 st.divider()
 st.caption(f"마지막 업데이트 시각: {datetime.now().strftime('%H:%M:%S')}")
 
+if curr:
+    diff = curr - prev
+    perc = (diff / prev * 100) if prev else 0
+    st.metric(label=name, value=f"{curr:,.2f}", delta=f"{perc:+.2f}%")
+    
+    # --- 드라마틱한 Plotly 차트 생성 ---
+    chart_data = yf.Ticker(info["y"]).history(period=period_map[selected_period])
+    
+    if not chart_data.empty:
+        # 상승/하락에 따른 메인 색상 결정 (사용자님의 빨강-보라 테마 반영)
+        main_color = "#FF4B4B" if diff >= 0 else "#0072ff"
+        
+        fig = go.Figure()
+
+        # 1. 부드러운 영역 차트 (드라마틱한 그라데이션 느낌)
+        fig.add_trace(go.Scatter(
+            x=chart_data.index, 
+            y=chart_data['Close'],
+            fill='tozeroy',
+            mode='lines',
+            line=dict(width=3, color=main_color),
+            fillcolor=f'rgba({255 if diff >= 0 else 0}, {75 if diff >= 0 else 114}, {75 if diff >= 0 else 255}, 0.2)',
+            name="종가"
+        ))
+
+        # 2. 디자인 설정 (다크모드 최적화)
+        fig.update_layout(
+            margin=dict(l=0, r=0, t=0, b=0),
+            height=250,
+            template="plotly_dark",
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            xaxis=dict(showgrid=False),
+            yaxis=dict(showgrid=True, gridcolor='#333'),
+            hovermode="x unified"
+        )
+        
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': 
+                                                               
 # 종목 카드 및 그래프 레이아웃
 if selected_names:
     cols = st.columns(len(selected_names))
