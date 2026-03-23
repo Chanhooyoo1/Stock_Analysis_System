@@ -132,20 +132,14 @@ st.markdown('<p class="main-title">주식 추세 일람 그래프</p>', unsafe_a
 st.markdown('<p class="sub-title">𝕽𝖊𝖆𝖑-𝖙𝖎𝖒𝖊 𝕱𝖎𝖓𝖆𝖓𝖈𝖎𝖆𝖑 𝕸𝖔𝖓𝖎𝖙𝖔𝖗𝖎𝖓𝖌 𝕾𝖞𝖘𝖙𝖊𝖒</p>', unsafe_allow_html=True)
 
 # 구글 검색창
-if search_q:
-    # 1. 입력받은 검색어 뒤에 공백과 '주가'를 붙입니다.
-    # url에 들어갈 때는 공백이 +나 %20으로 변환되어야 안전합니다.
-    refined_q = f"{search_q} 주가"
+user_input = st.text_input("종목명 입력") 
+
+if user_input:
+    # 2. 뒤에 공백 하나와 '주가'를 강제로 붙여버립니다.
+    magic_keyword = user_input + " 주가" 
     
-    st.write(f" **'{refined_q}'** 결과 바로가기:")
-    
-    # 가로로 버튼 3개 배치
-    s_col1 = st.columns(1)
-    
-    with s_col1:
-        # 구글: 검색어 뒤에 ' 주가' 포함
-        google_url = f"https://www.google.com/search?q={refined_q}"
-        st.link_button("🌐 Google 검색", google_url, use_container_width=True
+    # 3. 버튼을 누르면 이 'magic_keyword'가 검색어로 날아갑니다!
+    st.link_button("네이버에서 검색", f"https://search.naver.com/search.naver?query={magic_keyword}")
 
 st.divider()
 st.caption(f"마지막 업데이트 시각: {datetime.now().strftime('%H:%M:%S')}")
