@@ -132,12 +132,30 @@ st.markdown('<p class="main-title">주식 추세 일람 그래프</p>', unsafe_a
 st.markdown('<p class="sub-title">𝕽𝖊𝖆𝖑-𝖙𝖎𝖒𝖊 𝕱𝖎𝖓𝖆𝖓𝖈𝖎𝖆𝖑 𝕸𝖔𝖓𝖎𝖙𝖔𝖗𝖎𝖓𝖌 𝕾𝖞𝖘𝖙𝖊𝖒</p>', unsafe_allow_html=True)
 
 # 구글 검색창
-search_q = st.text_input("", placeholder="궁금한 종목의 추세를 찾아보세요!")
 if search_q:
-    # 사용자가 입력한 검색어 뒤에 ' 주가'를 자동으로 붙임
+    # 1. 입력받은 검색어 뒤에 공백과 '주가'를 붙입니다.
+    # url에 들어갈 때는 공백이 +나 %20으로 변환되어야 안전합니다.
     refined_q = f"{search_q} 주가"
-    # 실제 구글 검색 링크 생성
-    st.markdown(f"[구글에서 **'{refined_q}'** 검색 결과 보기](https://www.google.com/search?q={refined_q})")
+    
+    st.write(f"🚀 **'{refined_q}'** 결과 바로가기:")
+    
+    # 가로로 버튼 3개 배치
+    s_col1, s_col2, s_col3 = st.columns(3)
+    
+    with s_col1:
+        # 구글: 검색어 뒤에 ' 주가' 포함
+        google_url = f"https://www.google.com/search?q={refined_q}"
+        st.link_button("🌐 Google 검색", google_url, use_container_width=True)
+        
+    with s_col2:
+        # 네이버: 검색어 뒤에 ' 주가' 포함
+        naver_url = f"https://search.naver.com/search.naver?query={refined_q}"
+        st.link_button("💚 Naver 검색", naver_url, use_container_width=True)
+        
+    with s_col3:
+        # 다음: 검색어 뒤에 ' 주가' 포함
+        daum_url = f"https://search.daum.net/search?q={refined_q}"
+        st.link_button("💙 Daum 검색", daum_url, use_container_width=True)
 
 st.divider()
 st.caption(f"마지막 업데이트 시각: {datetime.now().strftime('%H:%M:%S')}")
