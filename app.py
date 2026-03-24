@@ -27,28 +27,16 @@ def get_naver_stock(code):
     except: return None
 
 def get_naver_news_search(limit=6):
-    """네이버 뉴스에서 '주식' 키워드로 최신 뉴스 검색 결과 가져오기"""
-    # '주식' 키워드 + 최신순(sort=1) 정렬 주소입니다.
+    """네이버 뉴스 '주식' 키워드 최신순 검색"""
     url = "https://search.naver.com/search.naver?where=news&query=주식&sm=tab_pge&sort=1"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    }
+    headers = {"User-Agent": "Mozilla/5.0"}
     try:
         res = requests.get(url, headers=headers, timeout=5)
         soup = BeautifulSoup(res.text, 'html.parser')
-        # 네이버 뉴스 검색 결과의 제목 태그 선택자입니다.
         news_items = soup.select(".news_tit")
-        
-        results = []
-        for item in news_items[:limit]:
-            results.append({
-                "title": item.get("title"),
-                "link": item.get("href")
-            })
+        results = [{"title": item.get("title"), "link": item.get("href")} for item in news_items[:limit]]
         return results
-    except Exception as e:
-        print(f"뉴스 로딩에 실패했어요. 나중에 다시 시도해주세요.: {e}")
-        return []
+    except: return []
 
 # --- [2. 페이지 설정 및 디자인] ---
 st.set_page_config(page_title="주식 실시간 모니터링", page_icon="📈", layout="wide")
@@ -83,7 +71,6 @@ with st.sidebar:
         "넷플릭스 (NFLX)": {"id": "NFLX", "y": "NFLX"},
         "맥도날드": {"id": "MCD", "y": "MCD"}
         
-        
     }
     
     selected_names = st.multiselect(
@@ -94,27 +81,28 @@ with st.sidebar:
     
     st.divider()
 
+    # 경고 해결: width='stretch' 사용
     if st.button("새로고침", width='stretch', key="sidebar_btn"):
         st.rerun()
 
     st.divider()
     st.subheader("📰 네이버 주식 뉴스")
-    # RSS 대신 네이버 검색 함수 사용
     news_data = get_naver_news_search(6)
-    
     if news_data:
         for news in news_data:
             short_t = news["title"][:22] + ".." if len(news["title"]) > 22 else news["title"]
-            st.markdown(f'<div class="news-item">· <a class="news-link" href="{news["link"]}" target="_blank" title="{news["title"]}">{short_t}</a></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="news-item">· <a class="news-link" href="{news["link"]}" target="_blank">{short_t}</a></div>', unsafe_allow_html=True)
     else:
-        st.info("네이버 뉴스를 가져올 수 없습니다.")
+        st.info("뉴스를 가져올 수 없습니다.")
 
 # --- [4. 메인 화면] ---
 st.markdown('<p class="main-title">실시간 주식 대시보드</p>', unsafe_allow_html=True)
 
+# empty label 경고 방지용
 search_q = st.text_input("검색", placeholder="종목명을 입력하세요", label_visibility="collapsed")
 if search_q:
     c1, c2, c3 = st.columns(3)
+    # 경고 해결: width='stretch' 사용
     with c1: st.link_button("🌐 Google", f"https://www.google.com/search?q={search_q}+주가", width='stretch')
     with c2: st.link_button("네이버", f"https://search.naver.com/search.naver?query={search_q}+주가", width='stretch')
     with c3: st.link_button("다음", f"https://search.daum.net/search?q={search_q}+주가", width='stretch')
@@ -139,6 +127,7 @@ if selected_names:
                     perc = (curr_val - prev_close) / prev_close * 100
                     st.metric(label=name, value=f"${curr_val:,.2f}", delta=f"{perc:+.2f}%")
 
+            # 그래프 경고 해결: use_container_width=True 유지 (그래프용은 아직 표준임)
             df = yf.Ticker(info["y"]).history(period="1d", interval="1m")
             if not df.empty:
                 fig = go.Figure(go.Scatter(x=df.index, y=df['Close'], fill='tozeroy', mode='lines', line=dict(color="#FF4B4B")))
