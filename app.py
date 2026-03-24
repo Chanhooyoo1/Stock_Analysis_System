@@ -18,65 +18,32 @@ def refresh_soopeh_token():
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+    # 서버 환경에서 크롬 위치 강제 지정
+    options.binary_location = "/usr/bin/chromium" 
     
     try:
-        service = Service(ChromeDriverManager().install())
+        # 드라이버 경로 자동 설정 (Service 부분 수정)
+        service = Service("/usr/bin/chromedriver")
         driver = webdriver.Chrome(service=service, options=options)
-        driver.get("https://www.soopeh.com/login")
-        time.sleep(3)
         
+        driver.get("https://www.soopeh.com/login")
+        time.sleep(5)
+        
+        # ... (이하 아이디/비번 입력 로직 동일) ...
         driver.find_element(By.ID, "login-identifier").send_keys("yd60106")
         pw_field = driver.find_element(By.CSS_SELECTOR, "input[type='password']")
-        
-        # ★ 찬후님 비밀번호 입력 ★
-        pw_field.send_keys("koreaCHY1488@!") 
+        pw_field.send_keys("찬후님비밀번호") 
         pw_field.send_keys(Keys.ENTER)
         
-        time.sleep(7) 
+        time.sleep(8)
         cookies = driver.get_cookies()
         driver.quit()
         
         if cookies:
-            new_cookie = "; ".join([f"{c['name']}={c['value']}" for c in cookies])
-            return new_cookie
+            return "; ".join([f"{c['name']}={c['value']}" for c in cookies])
     except Exception as e:
-        st.error(f"⚠️ 로그인 엔진 오류: {e}")
+        st.error(f"서버 로그인 엔진 오류: {e}")
         return None
-
-# --- [2. 수페 API 전용 호출 함수] ---
-def get_soopeh_only_nvda():
-    """yfinance 백업 없이 오직 수페 API 데이터만 가져옵니다."""
-    if 'soopeh_cookie' not in st.session_state:
-        # 찬후님이 처음 알려주신 그 쿠키값
-        st.session_state.soopeh_cookie = "_ga=GA1.1.836760262.1774343435; soopeh_auth=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZmY0MjNmNS1iY2JlLTQzYWMtODFmNy1jOWUwYzg1YjdlMmUiLCJlbWFpbCI6bnVsbCwibG9naW5JZCI6InlkNjAxMDYiLCJuaWNrbmFtZSI6IuycoOywrO2bhCIsInR5cCI6IkpXVCJ9..."
-
-    url = "https://api.soopeh.com/economy/stocks/quotes?symbols=NVDA"
-    headers = {
-        "cookie": st.session_state.soopeh_cookie,
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-        "referer": "https://www.soopeh.com/",
-        "origin": "https://www.soopeh.com"
-    }
-
-    res = requests.get(url, headers=headers, timeout=5)
-    
-    # 토큰 만료 시 자동 갱신 시도
-    if res.status_code != 200:
-        with st.spinner('🔄 토큰 만료됨! 자동 로그인 중...'):
-            new_c = refresh_soopeh_token()
-            if new_c:
-                st.session_state.soopeh_cookie = new_c
-                headers["cookie"] = new_c
-                res = requests.get(url, headers=headers, timeout=5)
-            else:
-                return "LOGIN_FAILED"
-
-    if res.status_code == 200:
-        data = res.json()
-        if data and len(data) > 0:
-            return {'curr': data[0].get('price', 0), 'perc': data[0].get('changeRate', 0)}
-    
-    return "API_ERROR"
 
 # --- [3. 디자인 및 레이아웃 (찬후님 원본)] ---
 st.set_page_config(page_title="수페 API 실시간 모니터링", page_icon="📈", layout="wide")
