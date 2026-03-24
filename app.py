@@ -106,15 +106,6 @@ with st.sidebar:
 st.markdown('<p class="main-title">주식 추세 일람 그래프</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">𝕽𝖊𝖆𝖑-𝖙𝖎𝖒𝖊 𝕱𝖎𝖓𝖆𝖓𝖈𝖎𝖆𝖑 𝕸𝖔𝖓𝖎𝖙𝖔𝖗𝖎𝖓𝖌 𝕾𝖞𝖘𝖙𝖊𝖒</p>', unsafe_allow_html=True)
 
-search_q = st.text_input("검색", placeholder="종목명을 입력하세요", label_visibility="collapsed")
-if search_q:
-    c1, c2, c3 = st.columns(3)
-    with c1: st.link_button("Google", f"https://www.google.com/search?q={search_q}+주가", width='stretch')
-    with c2: st.link_button("네이버", f"https://search.naver.com/search.naver?query={search_q}+주가", width='stretch')
-    with c3: st.link_button("다음", f"https://search.daum.net/search?q={search_q}+주가", width='stretch')
-
-st.divider()
-
 if selected_names:
     for name in selected_names:
         info = stock_dict[name]
@@ -125,62 +116,41 @@ if selected_names:
                 res = get_naver_stock(info["id"])
                 if res: st.metric(label=name, value=f"{res['curr']:,}원", delta=f"{res['perc']:+.2f}%")
             else:
-                y_ticker = yf.Ticker(info["y"])
-                y_hist = y_ticker.history(period="1d")
-                if not y_hist.empty:
-                    curr_val = y_hist['Close'].iloc[-1]
-                    prev_close = y_ticker.info.get('regularMarketPreviousClose', curr_val)
-                    st.metric(label=name, value=f"${curr_val:,.2f}", delta=f"{(curr_val-prev_close)/prev_close*100:+.2f}%")
+                y_t = yf.Ticker(info["y"])
+                y_h = y_t.history(period="1d")
+                if not y_h.empty:
+                    c_v = y_h['Close'].iloc[-1]
+                    p_c = y_t.info.get('regularMarketPreviousClose', c_v)
+                    st.metric(label=name, value=f"${c_v:,.2f}", delta=f"{(c_v-p_c)/p_c*100:+.2f}%")
 
-        # --- [HTS 스타일 차트 생성] ---
+        # --- [차트 생성] ---
         itv = "30m" if selected_p == "7d" else "1d"
         df = yf.Ticker(info["y"]).history(period=selected_p, interval=itv)
         
         if not df.empty:
-            df['이동평균선 (5일)'] = df['Close'].rolling(window=5).mean()
-            df['이동평균선 (20일)'] = df['Close'].rolling(window=20).mean()
-            df['이동평균선 (60일)'] = df['Close'].rolling(window=60).mean()
-
+            df['MA5'] = df['Close'].rolling(5).mean(); df['MA20'] = df['Close'].rolling(20).mean(); df['MA60'] = df['Close'].rolling(60).mean()
             fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.05, row_width=[0.2, 0.8])
-
-            # 캔들
-            fig.add_trace(go.Candlestick(
-                x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'],
-                name='Price', increasing_line_color='#FF4B4B', decreasing_line_color='#0083B0'
-            ), row=1, col=1)
-
-            # 이동평균선 (범례 표시 설정 showlegend=True)
-            fig.add_trace(go.Scatter(x=df.index, y=df['이동평균선 (5일)'], name='이동평균선 (5일)', line=dict(color='#FFEE00', width=1.2), showlegend=True), row=1, col=1)
-            fig.add_trace(go.Scatter(x=df.index, y=df['이동평균선 (20일)'], name='이동평균선 (20일)', line=dict(color='#FF00FF', width=1.2), showlegend=True), row=1, col=1)
-            fig.add_trace(go.Scatter(x=df.index, y=df['이동평균선 (60일)'], name='이동평균선 (60일)', line=dict(color='#00FF00', width=1.2), showlegend=True), row=1, col=1)
-
-            # 가로선
+            
+            # 캔들 & 이평선
+            fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Price', increasing_line_color='#FF4B4B', decreasing_line_color='#0083B0'), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df['MA5'], name='MA5', line=dict(color='#FFEE00', width=1.2)), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df['MA20'], name='MA20', line=dict(color='#FF00FF', width=1.2)), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df['MA60'], name='MA60', line=dict(color='#00FF00', width=1.2)), row=1, col=1)
+            
             if target_price > 0:
-                fig.add_hline(y=target_price, line_dash="dash", line_color="#FFFFFF", 
-                              annotation_text=f"Target: {target_price:,.0f}", 
-                              annotation_position="top right", row=1, col=1)
+                fig.add_hline(y=target_price, line_dash="dash", line_color="white", annotation_text=f"Target: {target_price:,.0f}", row=1, col=1)
 
-            # 거래량
-            fig.add_trace(go.Bar(x=df.index, y=df['Volume'], name='Volume', marker_color='#FF4B4B', opacity=0.5, showlegend=False), row=2, col=1)
+            fig.add_trace(go.Bar(x=df.index, y=df['Volume'], name='Volume', marker_color='#FF4B4B', opacity=0.5), row=2, col=1)
 
-fig.update_layout(
-                height=550, 
-                template="plotly_dark", 
-                paper_bgcolor='rgba(0,0,0,0)', 
-                plot_bgcolor='rgba(0,0,0,0)',
-                margin=dict(l=10, r=10, t=10, b=10), 
-                xaxis_rangeslider_visible=False, 
-                showlegend=False,
-                dragmode=False, # 드래그 확대 끄기
-                hoverlabel=dict(
-                    font=dict(
-                        color="black", # 글자 색상: 검정
-                        size=13       # 글자 크기 (선택 사항)
-                    ),
-                    bgcolor="white"   # 배경 색상: 흰색 (기본값이지만 명시)
-                )
+            # 레이아웃 & 🔥 호버 글자 검정색 설정
+            fig.update_layout(
+                height=550, template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                margin=dict(l=10, r=10, t=10, b=10), xaxis_rangeslider_visible=False, dragmode=False,
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                hoverlabel=dict(font=dict(color="black", size=13), bgcolor="white") # 호버 스타일링
             )
-
+            with m_col2: st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.divider()
 # --- [5. 메모장] ---
 m1, m2 = st.columns([4, 1])
 with m1: st.text_area("메모장", placeholder="오늘의 투자 메모..", height=100)
