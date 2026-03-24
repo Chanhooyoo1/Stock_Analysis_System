@@ -7,3 +7,5 @@ streamlit-autorefresh
 plotly
 feedparser
 requests
+selenium
+webdriver-manager
