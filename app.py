@@ -9,7 +9,6 @@ from streamlit_autorefresh import st_autorefresh
 # --- [1. 엔진 함수 정의] ---
 
 def get_naver_stock(code):
-    """네이버 파이낸스 실시간 주가 크롤링"""
     url = f"https://finance.naver.com/item/main.naver?code={code}"
     try:
         res = requests.get(url, timeout=5)
@@ -27,7 +26,6 @@ def get_naver_stock(code):
     except: return None
 
 def get_naver_news_search(limit=6):
-    """네이버 뉴스 '주식' 키워드 최신순 검색"""
     url = "https://search.naver.com/search.naver?where=news&query=주식&sm=tab_pge&sort=1"
     headers = {"User-Agent": "Mozilla/5.0"}
     try:
@@ -67,10 +65,7 @@ with st.sidebar:
         "SK 하이닉스 (Hynix)": {"id": "000660", "y": "000660.KS"},
         "엔비디아 (NVDA)": {"id": "NVDA", "y": "NVDA"},
         "알파벳(구글) (GOOG)": {"id": "GOOG", "y": "GOOG"},
-        "LG전자": {"id": "066570", "y": "066570.KS"},
-        "넷플릭스 (NFLX)": {"id": "NFLX", "y": "NFLX"},
-        "맥도날드": {"id": "MCD", "y": "MCD"}
-        
+        "애플 (AAPL)": {"id": "AAPL", "y": "AAPL"}
     }
     
     selected_names = st.multiselect(
@@ -81,7 +76,6 @@ with st.sidebar:
     
     st.divider()
 
-    # 경고 해결: width='stretch' 사용
     if st.button("새로고침", width='stretch', key="sidebar_btn"):
         st.rerun()
 
@@ -98,47 +92,6 @@ with st.sidebar:
 # --- [4. 메인 화면] ---
 st.markdown('<p class="main-title">실시간 주식 대시보드</p>', unsafe_allow_html=True)
 
-# empty label 경고 방지용
 search_q = st.text_input("검색", placeholder="종목명을 입력하세요", label_visibility="collapsed")
 if search_q:
-    c1, c2, c3 = st.columns(3)
-    # 경고 해결: width='stretch' 사용
-    with c1: st.link_button("🌐 Google", f"https://www.google.com/search?q={search_q}+주가", width='stretch')
-    with c2: st.link_button("네이버", f"https://search.naver.com/search.naver?query={search_q}+주가", width='stretch')
-    with c3: st.link_button("다음", f"https://search.daum.net/search?q={search_q}+주가", width='stretch')
-
-st.divider()
-
-if selected_names:
-    cols = st.columns(len(selected_names))
-    for i, name in enumerate(selected_names):
-        info = stock_dict[name]
-        with cols[i]:
-            if info["id"].isdigit(): # 국내주식
-                res = get_naver_stock(info["id"])
-                if res:
-                    st.metric(label=name, value=f"{res['curr']:,}원", delta=f"{res['perc']:+.2f}%")
-            else: # 해외주식
-                y_ticker = yf.Ticker(info["y"])
-                y_hist = y_ticker.history(period="1d")
-                if not y_hist.empty:
-                    curr_val = y_hist['Close'].iloc[-1]
-                    prev_close = y_ticker.info.get('regularMarketPreviousClose', curr_val)
-                    perc = (curr_val - prev_close) / prev_close * 100
-                    st.metric(label=name, value=f"${curr_val:,.2f}", delta=f"{perc:+.2f}%")
-
-            # 그래프 경고 해결: use_container_width=True 유지 (그래프용은 아직 표준임)
-            df = yf.Ticker(info["y"]).history(period="1d", interval="1m")
-            if not df.empty:
-                fig = go.Figure(go.Scatter(x=df.index, y=df['Close'], fill='tozeroy', mode='lines', line=dict(color="#FF4B4B")))
-                fig.update_layout(margin=dict(l=0,r=0,t=10,b=0), height=250, template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-
-st.divider()
-m1, m2 = st.columns([4, 1])
-with m1: st.text_area("메모장", placeholder="오늘의 투자 메모..", height=100)
-with m2: 
-    st.write("")
-    st.write("")
-    if st.button("새로고침🔄", width='stretch', key="main_btn"):
-        st.rerun()
+    c1, c
