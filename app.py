@@ -10,6 +10,7 @@ from streamlit_autorefresh import st_autorefresh
 # --- [1. 엔진 함수 정의] ---
 
 def get_naver_stock(code):
+    """네이버 파이낸스 실시간 주가 크롤링"""
     url = f"https://finance.naver.com/item/main.naver?code={code}"
     try:
         res = requests.get(url, timeout=5)
@@ -27,7 +28,7 @@ def get_naver_stock(code):
     except: return None
 
 def get_stock_news(limit=6):
-    """주식/경제 전문 뉴스 RSS (매일경제 증권)"""
+    """주식/경제 전문 뉴스 RSS"""
     rss_url = "https://www.mk.co.kr/rss/30200001/"
     try:
         feed = feedparser.parse(rss_url)
@@ -56,17 +57,19 @@ st.markdown("""
 
 st_autorefresh(interval=60000, key="auto_refresh")
 
-# --- [3. 사이드바 (괄호 짝 맞춤 완료)] ---
+# --- [3. 사이드바 (종목 리스트 원복)] ---
 with st.sidebar:
     st.header("📊 설정")
+    # 원래 요청하셨던 종목 리스트로 구성했습니다.
     stock_dict = {
         "삼성전자 (Samsung)": {"id": "005930", "y": "005930.KS"},
+        "현대자동차 (Hyundai)": {"id": "005380", "y": "005380.KS"},
         "SK 하이닉스 (Hynix)": {"id": "000660", "y": "000660.KS"},
         "엔비디아 (NVDA)": {"id": "NVDA", "y": "NVDA"},
+        "알파벳(구글) (GOOG)": {"id": "GOOG", "y": "GOOG"},
         "애플 (AAPL)": {"id": "AAPL", "y": "AAPL"}
     }
     
-    # 에러 났던 부분: 괄호 짝을 정확히 맞췄습니다.
     selected_names = st.multiselect(
         "종목 선택", 
         options=list(stock_dict.keys()), 
@@ -74,9 +77,7 @@ with st.sidebar:
     )
     
     st.divider()
-    st.subheader("🔔 가격 알림")
-    target_nvda = st.number_input("NVDA 목표 ($)", value=1000.0)
-    target_samsung = st.number_input("삼성 목표 (원)", value=80000)
+    # 알림 설정 부분은 요청대로 제거했습니다.
 
     if st.button("새로고침", width='stretch', key="sidebar_btn"):
         st.rerun()
@@ -89,7 +90,7 @@ with st.sidebar:
             short_t = news["title"][:22] + ".." if len(news["title"]) > 22 else news["title"]
             st.markdown(f'<div class="news-item">· <a class="news-link" href="{news["link"]}" target="_blank">{short_t}</a></div>', unsafe_allow_html=True)
     else:
-        st.info("뉴스를 가져올 수 없습니다. (라이브러리 확인 필요)")
+        st.info("뉴스를 가져올 수 없습니다.")
 
 # --- [4. 메인 화면] ---
 st.markdown('<p class="main-title">실시간 주식 대시보드</p>', unsafe_allow_html=True)
@@ -113,18 +114,17 @@ if selected_names:
                 res = get_naver_stock(info["id"])
                 if res:
                     st.metric(label=name, value=f"{res['curr']:,}원", delta=f"{res['perc']:+.2f}%")
-                    if name == "삼성전자 (Samsung)" and res['curr'] >= target_samsung:
-                        st.toast(f"🚀 삼성전자 {target_samsung}원 돌파!", icon="🔥")
             else: # 해외주식
                 y_ticker = yf.Ticker(info["y"])
                 y_hist = y_ticker.history(period="1d")
                 if not y_hist.empty:
                     curr_val = y_hist['Close'].iloc[-1]
-                    st.metric(label=name, value=f"${curr_val:,.2f}")
-                    if name == "엔비디아 (NVDA)" and curr_val >= target_nvda:
-                        st.toast(f"🚀 NVDA ${target_nvda} 돌파!", icon="🔥")
+                    # 이전 종가 대비 등락률 계산
+                    prev_close = y_ticker.info.get('regularMarketPreviousClose', curr_val)
+                    perc = (curr_val - prev_close) / prev_close * 100
+                    st.metric(label=name, value=f"${curr_val:,.2f}", delta=f"{perc:+.2f}%")
 
-            # 그래프 (1분 단위)
+            # 그래프
             df = yf.Ticker(info["y"]).history(period="1d", interval="1m")
             if not df.empty:
                 fig = go.Figure(go.Scatter(x=df.index, y=df['Close'], fill='tozeroy', mode='lines', line=dict(color="#FF4B4B")))
