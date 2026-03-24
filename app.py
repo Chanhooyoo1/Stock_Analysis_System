@@ -86,7 +86,7 @@ with st.sidebar:
     
     st.divider()
     period_options = {"1주일": "7d", "1개월": "1mo", "6개월": "6mo", "1년": "1y", "5년": "5y"}
-    selected_period_label = st.selectbox("그래프 조회 기간", options=list(period_options.keys()), index=2)
+    selected_period_label = st.selectbox("모니터링 기간", options=list(period_options.keys()), index=2)
     selected_p = period_options[selected_period_label]
 
     st.divider()
@@ -132,15 +132,15 @@ if selected_names:
             fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.05, row_width=[0.2, 0.8])
             
             # 캔들 & 이평선
-            fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Price', increasing_line_color='#FF4B4B', decreasing_line_color='#0083B0'), row=1, col=1)
-            fig.add_trace(go.Scatter(x=df.index, y=df['MA5'], name='MA5', line=dict(color='#FFEE00', width=1.2)), row=1, col=1)
-            fig.add_trace(go.Scatter(x=df.index, y=df['MA20'], name='MA20', line=dict(color='#FF00FF', width=1.2)), row=1, col=1)
-            fig.add_trace(go.Scatter(x=df.index, y=df['MA60'], name='MA60', line=dict(color='#00FF00', width=1.2)), row=1, col=1)
+            fig.add_trace(go.Candlestick(x=df.index, open=df['열림'], high=df['높음!'], low=df['낮음..'], close=df['닫힘'], name='Price', increasing_line_color='#FF4B4B', decreasing_line_color='#0083B0'), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df['5일 이동평균선'], name='MA5', line=dict(color='#FFEE00', width=1.2)), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df['20일 이동평균선'], name='MA20', line=dict(color='#FF00FF', width=1.2)), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df['60일 이동평균선'], name='MA60', line=dict(color='#00FF00', width=1.2)), row=1, col=1)
             
             if target_price > 0:
                 fig.add_hline(y=target_price, line_dash="dash", line_color="white", annotation_text=f"Target: {target_price:,.0f}", row=1, col=1)
 
-            fig.add_trace(go.Bar(x=df.index, y=df['Volume'], name='Volume', marker_color='#FF4B4B', opacity=0.5), row=2, col=1)
+            fig.add_trace(go.Bar(x=df.index, y=df['거래량'], name='Volume', marker_color='#FF4B4B', opacity=0.5), row=2, col=1)
 
             # 레이아웃 & 🔥 호버 글자 검정색 설정
             fig.update_layout(
@@ -153,7 +153,7 @@ if selected_names:
         st.divider()
 # --- [5. 메모장] ---
 m1, m2 = st.columns([4, 1])
-with m1: st.text_area("메모장", placeholder="오늘의 투자 메모..", height=100)
+with m1: st.text_area("메모장", placeholder="텍스트를 입력해보세요... 삼떡기", height=100)
 with m2: 
     st.write("")
     st.write("")
