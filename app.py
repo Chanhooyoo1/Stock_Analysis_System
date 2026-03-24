@@ -112,7 +112,8 @@ with st.sidebar:
         st.info("뉴스를 로딩 중이거나 가져올 수 없습니다.")
 
 # 메인
-st.markdown('<p class="main-title">실시간 주식 대시보드</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-title">주식 추세 일람 그래프</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">𝕽𝖊𝖆𝖑-𝖙𝖎𝖒𝖊 𝕱𝖎𝖓𝖆𝖓𝖈𝖎𝖆𝖑 𝕸𝖔𝖓𝖎𝖙𝖔𝖗𝖎𝖓𝖌 𝕾𝖞𝖘𝖙𝖊𝖒</p>', unsafe_allow_html=True)
 
 search_q = st.text_input("검색", placeholder="종목명을 입력하세요", label_visibility="collapsed")
 if search_q:
