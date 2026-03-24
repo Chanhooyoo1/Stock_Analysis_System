@@ -121,6 +121,7 @@ with st.sidebar:
         "맥도날드 (MCD)": {"id": "MCD", "type": "US", "y": "MCD"},
         "넷플릭스(NFLX)": {"id": "NFLX", "type": "US", "y": "NFLX"},
         "SK 하이닉스 (Hynix)": {"id": "000660", "type": "US", "y": "000660.KS"}
+        "LG전자(LEC)": {"id": "066570", "type": "US", "y": "066570.KS"}
        
     }
     selected_names = st.multiselect("종목 선택", list(stock_dict.keys()))
