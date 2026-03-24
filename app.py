@@ -90,10 +90,10 @@ with st.sidebar:
     selected_p = period_options[selected_period_label]
 
     st.divider()
-    st.subheader("📍 차트 설정")
-    target_price = st.number_input("가로선 표시 가격 (0은 해제)", min_value=0.0, value=0.0, step=100.0)
+    st.subheader("목표 가격 설정")
+    target_price = st.number_input("목표 가격 설정", min_value=0.0, value=0.0, step=100.0)
 
-    if st.button("새로고침", width='stretch', key="sidebar_btn"): st.rerun()
+    if st.button("확인", width='stretch', key="sidebar_btn"): st.rerun()
 
     st.divider()
     st.subheader("📰 오늘의 주식 뉴스")
@@ -137,9 +137,9 @@ if selected_names:
         df = yf.Ticker(info["y"]).history(period=selected_p, interval=itv)
         
         if not df.empty:
-            df['MA5'] = df['Close'].rolling(window=5).mean()
-            df['MA20'] = df['Close'].rolling(window=20).mean()
-            df['MA60'] = df['Close'].rolling(window=60).mean()
+            df['이동평균선 (5일)'] = df['Close'].rolling(window=5).mean()
+            df['이동평균선 (20일)'] = df['Close'].rolling(window=20).mean()
+            df['이동평균선 (60일)'] = df['Close'].rolling(window=60).mean()
 
             fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.05, row_width=[0.2, 0.8])
 
@@ -150,9 +150,9 @@ if selected_names:
             ), row=1, col=1)
 
             # 이동평균선 (범례 표시 설정 showlegend=True)
-            fig.add_trace(go.Scatter(x=df.index, y=df['MA5'], name='MA5', line=dict(color='#FFEE00', width=1.2), showlegend=True), row=1, col=1)
-            fig.add_trace(go.Scatter(x=df.index, y=df['MA20'], name='MA20', line=dict(color='#FF00FF', width=1.2), showlegend=True), row=1, col=1)
-            fig.add_trace(go.Scatter(x=df.index, y=df['MA60'], name='MA60', line=dict(color='#00FF00', width=1.2), showlegend=True), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df['이동평균선 (5일)'], name='이동평균선 (5일)', line=dict(color='#FFEE00', width=1.2), showlegend=True), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df['이동평균선 (20일)'], name='이동평균선 (20일)', line=dict(color='#FF00FF', width=1.2), showlegend=True), row=1, col=1)
+            fig.add_trace(go.Scatter(x=df.index, y=df['이동평균선 (60일)'], name='이동평균선 (60일)', line=dict(color='#00FF00', width=1.2), showlegend=True), row=1, col=1)
 
             # 가로선
             if target_price > 0:
