@@ -42,6 +42,7 @@ def get_stock_news(limit=6):
 # --- [3. 페이지 설정 및 디자인 (CSS)] ---
 st.set_page_config(page_title="국내-해외 주식 현황 모니터링", page_icon="📈", layout="wide")
 
+# CSS의 따옴표 닫힘을 완벽하게 확인했습니다.
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -63,10 +64,6 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4); 
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
     }
-    div.stButton > button:hover { 
-        transform: translateY(-3px) scale(1.02); 
-        box-shadow: 0 8px 25px rgba(118, 75, 162, 0.6); 
-    }
 
     [data-testid="stMetric"] { background-color: #1e1e1e; padding: 20px; border-radius: 15px; }
     
@@ -77,7 +74,7 @@ st.markdown("""
 
 st_autorefresh(interval=60000, key="auto_refresh")
 
-# --- [4. 사이드바 (최신 문법 적용)] ---
+# --- [4. 사이드바 (2026 표준 문법 적용)] ---
 with st.sidebar:
     st.header("📊 모니터링 설정")
     stock_dict = {
@@ -90,7 +87,7 @@ with st.sidebar:
     }
     selected_names = st.multiselect("종목 선택", list(stock_dict.keys()), default=["엔비디아 (NVDA)", "삼성전자 (Samsung)"])
     
-    # use_container_width=True를 width='stretch'로 변경
+    # use_container_width=True -> width='stretch'로 변경 완료
     if st.button("새로고침 (수동)", width='stretch'):
         st.rerun()
 
@@ -104,17 +101,17 @@ with st.sidebar:
     else:
         st.info("뉴스를 불러올 수 없습니다.")
 
-# --- [5. 메인 화면 (최신 문법 적용)] ---
+# --- [5. 메인 화면 (로그 경고 해결)] ---
 st.markdown('<p class="main-title">주식 추세 일람 그래프</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">𝕽𝖊𝖆𝖑-𝖙𝖎𝖒𝖊 𝕱𝖎𝖓𝖆𝖓𝖈𝖎𝖆𝖑 𝕸𝖔𝖓𝖎𝖙𝖔𝖗𝖎𝖓𝖌 𝕾𝖞𝖘𝖙𝖊𝖒</p>', unsafe_allow_html=True)
 
-# label을 비우지 않고 숨김 처리 (웹 접근성 준수)
-search_q = st.text_input("종목 검색", placeholder="알아보고 싶은 종목명을 입력해주세요.", label_visibility="collapsed")
+# empty label 경고 해결: 라벨을 넣고 visibility를 collapsed로 설정
+search_q = st.text_input("종목명 검색", placeholder="알아보고 싶은 종목명을 입력해주세요.", label_visibility="collapsed")
 
 if search_q:
     refined_q = f"{search_q} 주가"
     s_col1, s_col2, s_col3 = st.columns(3)
-    # 버튼 width='stretch' 적용
+    # 모든 버튼 width='stretch' 적용
     with s_col1: st.link_button("🌐 Google", f"https://www.google.com/search?q={refined_q}", width='stretch')
     with s_col2: st.link_button("네이버", f"https://search.naver.com/search.naver?query={refined_q}", width='stretch')
     with s_col3: st.link_button("다음", f"https://search.daum.net/search?q={refined_q}", width='stretch')
@@ -142,7 +139,6 @@ if selected_names:
             if not df.empty:
                 fig = go.Figure(go.Scatter(x=df.index, y=df['Close'], fill='tozeroy', mode='lines', line=dict(color="#FF4B4B", width=3)))
                 fig.update_layout(margin=dict(l=0, r=0, t=10, b=0), height=300, template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-                # plotly_chart에는 아직 width='stretch'가 적용되지 않으므로 그대로 유지하거나 use_container_width 사용
                 st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
 
 st.divider()
