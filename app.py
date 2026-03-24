@@ -163,27 +163,23 @@ if selected_names:
             # 거래량
             fig.add_trace(go.Bar(x=df.index, y=df['Volume'], name='Volume', marker_color='#FF4B4B', opacity=0.5, showlegend=False), row=2, col=1)
 
-            # 레이아웃 설정 (범례 위치 조정)
-            fig.update_layout(
-                height=550, template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                margin=dict(l=10, r=10, t=10, b=10), xaxis_rangeslider_visible=False,
-                dragmode=False,
-                # 🔥 범례(Legend) 스타일 설정: 그래프 상단 안쪽에 가로로 배치
-                legend=dict(
-                    orientation="h",       # 가로 배치
-                    yanchor="bottom",      # y축 기준점
-                    y=1.02,                # 그래프 바로 위
-                    xanchor="right",       # x축 기준점
-                    x=1,                   # 오른쪽 끝
-                    bgcolor="rgba(0,0,0,0)" # 배경 투명
+fig.update_layout(
+                height=550, 
+                template="plotly_dark", 
+                paper_bgcolor='rgba(0,0,0,0)', 
+                plot_bgcolor='rgba(0,0,0,0)',
+                margin=dict(l=10, r=10, t=10, b=10), 
+                xaxis_rangeslider_visible=False, 
+                showlegend=False,
+                dragmode=False, # 드래그 확대 끄기
+                hoverlabel=dict(
+                    font=dict(
+                        color="black", # 글자 색상: 검정
+                        size=13       # 글자 크기 (선택 사항)
+                    ),
+                    bgcolor="white"   # 배경 색상: 흰색 (기본값이지만 명시)
                 )
             )
-            fig.update_xaxes(gridcolor='#333333', showline=True)
-            fig.update_yaxes(gridcolor='#333333', showline=True)
-
-            with m_col2:
-                st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-        st.divider()
 
 # --- [5. 메모장] ---
 m1, m2 = st.columns([4, 1])
