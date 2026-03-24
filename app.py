@@ -7,6 +7,25 @@ from bs4 import BeautifulSoup
 import feedparser
 from streamlit_autorefresh import st_autorefresh
 
+st.set_page_config(page_title="국내-해외 주식 현황 모니터링", page_icon="📈", layout="wide")
+
+st.markdown("""
+    <style>
+    /* 폰트 설정 (Pretendard) */
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    * { font-family: 'Pretendard', sans-serif; }
+    
+    /* 메인 타이틀 스타일 */
+    .main-title { 
+        font-size: 40px !important; 
+        font-weight: 800; 
+        color: #FFFFFF; 
+        text-align: center; 
+        margin-bottom: 5px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .sub-title { font-size: 18px; color: #888888; text-align: center; font-style: italic; margin-bottom: 30px; }
+    
 # 1.신문 기사 크롤링 엔진
 def get_naver_stock(code):
     url = f"https://finance.naver.com/item/main.naver?code={code}"
