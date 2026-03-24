@@ -120,7 +120,7 @@ with st.sidebar:
         "알파벳(구글) (GOOG)": {"id": "GOOG", "type": "US", "y": "GOOG"},
         "맥도날드 (MCD)": {"id": "MCD", "type": "US", "y": "MCD"},
         "넷플릭스(NFLX)": {"id": "NFLX", "type": "US", "y": "NFLX"},
-        "SK 하이닉스 (Hynix)": {"id": "000660", "type": "KR", "y": "000660.KS"}
+        "SK 하이닉스 (Hynix)": {"id": "000660", "type": "KR", "y": "000660.KS"},
         "LG전자(LEC)": {"id": "066570", "type": "KR", "y": "066570.KS"}
        
     }
