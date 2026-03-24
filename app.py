@@ -2,44 +2,78 @@ import plotly.graph_objects as go
 import streamlit as st
 import yfinance as yf
 import pandas as pd
-from datetime import datetime
 import requests
-from bs4 import BeautifulSoup
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 from streamlit_autorefresh import st_autorefresh
 
-# --- [수페 API 연동 함수 - 엔비디아 전용] ---
-def get_soopeh_nvda():
-    """수페 서버에서 엔비디아 실시간 데이터를 가져옵니다."""
-    url = "https://api.soopeh.com/economy/stocks/quotes"
-    params = {"symbols": "NVDA"}
+# --- [자동 토큰 갱신 시스템] ---
+def refresh_soopeh_token():
+    """토큰이 죽으면 몰래 브라우저를 띄워 다시 로그인합니다."""
+    options = Options()
+    options.add_argument("--headless") # 창 안 띄움
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     
-    # [주의] 이 쿠키는 찬후님의 개인 인증 키입니다. 배포 시 보안에 주의하세요.
+    try:
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service, options=options)
+        driver.get("https://www.soopeh.com/login")
+        time.sleep(3)
+        
+        # 관심술사가 예측한 그 ID들!
+        driver.find_element(By.ID, "login-identifier").send_keys("yd60106")
+        # 혹시 ID가 다를 경우를 대비해 type='password'로 한 번 더 체크
+        try:
+            pw_field = driver.find_element(By.ID, "login-password")
+        except:
+            pw_field = driver.find_element(By.CSS_SELECTOR, "input[type='password']")
+            
+        pw_field.send_keys("여기_비밀번호_입력") # <--- 찬후님 비번!
+        pw_field.submit() # 엔터 효과
+        
+        time.sleep(5) # 로그인 로딩
+        
+        cookies = driver.get_cookies()
+        driver.quit()
+        
+        # 새 쿠키 문자열 조립
+        new_cookie = "; ".join([f"{c['name']}={c['value']}" for c in cookies])
+        return new_cookie
+    except Exception as e:
+        return None
+
+def get_soopeh_nvda():
+    """수페 API 호출 (실패 시 자동 갱신)"""
+    if 'soopeh_cookie' not in st.session_state:
+        st.session_state.soopeh_cookie = "기본_쿠키_값" # 처음엔 아까 찾은 거 넣어도 됨
+        
+    url = "https://api.soopeh.com/economy/stocks/quotes?symbols=NVDA"
     headers = {
-        "accept": "*/*",
-        "accept-encoding": "gzip, deflate, br, zstd",
-        "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-        # 찬후님이 찾으신 '마법의 열쇠' (쿠키)
-        "cookie": "_ga=GA1.1.836760262.1774343435; soopeh_refresh=n5p-oerNH3xDM39-WLsEjLpLoFp6NARoKLshl5TW5KU_hr9FckY0E5w-ULvrF_zj; soopeh_auth=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZmY0MjNmNS1iY2JlLTQzYWMtODFmNy1jOWUwYzg1YjdlMmUiLCJlbWFpbCI6bnVsbCwibG9naW5JZCI6InlkNjAxMDYiLCJuaWNrbmFtZSI6IuycoOywrO2bhCIsInJvbGUiOiJTVFVERU5UIiwidG9rZW5WZXJzaW9uIjozLCJ0b2tlblR5cGUiOiJhY2Nlc3MiLCJwYXNzd29yZENoYW5nZVJlcXVpcmVkIjpmYWxzZSwiaWF0IjoxNzc0MzQ2MzA0LCJleHAiOjE3NzQzNDcyMDR9.Dd59MK6rvsCsms6OGXOXrDd0C50L0ln4lKJeYSjXncQ; soopeh_csrf_v2=oIBBbLImBKAQcXYuc7IFLFIoRY1JT-GU",
-        "origin": "https://www.soopeh.com",
-        "referer": "https://www.soopeh.com/",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+        "cookie": st.session_state.soopeh_cookie,
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36..."
     }
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            if data and len(data) > 0:
-                # 수페 데이터 구조에 맞게 필요한 값만 추출해서 반환
-                soopeh_data = data[0]
-                return {
-                    'curr': soopeh_data.get('price', 0),
-                    'perc': soopeh_data.get('changeRate', 0)
-                }
+        res = requests.get(url, headers=headers, timeout=5)
+        # 토큰 만료(401/403) 시 자동 갱신 실행
+        if res.status_code != 200:
+            new_c = refresh_soopeh_token()
+            if new_c:
+                st.session_state.soopeh_cookie = new_c
+                headers["cookie"] = new_c
+                res = requests.get(url, headers=headers, timeout=5)
+        
+        if res.status_code == 200:
+            data = res.json()[0]
+            return {'curr': data.get('price', 0), 'perc': data.get('changeRate', 0)}
     except:
         pass
     return None
-
 # --- 1. 페이지 설정 및 디자인 (CSS) - 찬후님 원본 100% 동일 ---
 st.set_page_config(page_title="국내-해외 주식 현황 모니터링", page_icon="📈", layout="wide")
 
