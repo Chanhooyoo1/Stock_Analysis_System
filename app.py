@@ -102,10 +102,9 @@ with st.sidebar:
         for news in news_data:
             st.markdown(f'<div class="news-item">· <a class="news-link" href="{news["link"]}" target="_blank">{news["title"]}</a></div>', unsafe_allow_html=True)
 
-# --- [4. 메인 화면] ---
-# --- [4. 메인 화면 - 종목별 반복 출력] ---
+# 4. 메인
 if selected_names:
-    for name in selected_names:  # 여기서부터 기차가 시작됩니다!
+    for name in selected_names:
         info = stock_dict[name]
         m_col1, m_col2 = st.columns([1, 4])
         
@@ -121,21 +120,21 @@ if selected_names:
                     p_c = y_t.info.get('regularMarketPreviousClose', c_v)
                     st.metric(label=name, value=f"${c_v:,.2f}", delta=f"{(c_v-p_c)/p_c*100:+.2f}%")
 
-        # --- [차트 생성 로직] ---
+        # 그래프 생성 로직
         itv = "30m" if selected_p == "7d" else "1d"
         df = yf.Ticker(info["y"]).history(period=selected_p, interval=itv)
         
         if not df.empty:
-            # 데이터 계산
+            # 이평선 계산, 명칭 (이름)
             df['5일 이동평균선'] = df['Close'].rolling(5).mean()
             df['20일 이동평균선'] = df['Close'].rolling(20).mean()
             df['60일 이동평균선'] = df['Close'].rolling(60).mean()
             
-            # 도화지
+            # 배경
             fig = make_subplots(rows=2, cols=1, shared_xaxes=True, 
                                 vertical_spacing=0.05, row_width=[0.25, 0.75])
             
-            # 캔들 & 이평선
+            # 캔들차트, 이동평균선
             fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Price', increasing_line_color='#FF4B4B', decreasing_line_color='#0083B0'), row=1, col=1)
             fig.add_trace(go.Scatter(x=df.index, y=df['5일 이동평균선'], name='5일 이동평균선', line=dict(color='#FFEE00', width=1.2)), row=1, col=1)
             fig.add_trace(go.Scatter(x=df.index, y=df['20일 이동평균선'], name='20일 이동평균선', line=dict(color='#FF00FF', width=1.2)), row=1, col=1)
@@ -144,7 +143,7 @@ if selected_names:
             if target_price > 0:
                 fig.add_hline(y=target_price, line_dash="dash", line_color="white", annotation_text=f"Target: {target_price:,.0f}", row=1, col=1)
 
-            # 거래량 (중요: if target_price 밖으로!)
+            # 거래량
             fig.add_trace(go.Bar(x=df.index, y=df['Volume'], name='Volume', marker_color='#FF4B4B', opacity=0.5, showlegend=False), row=2, col=1)
 
             fig.update_layout(
@@ -157,9 +156,8 @@ if selected_names:
             with m_col2: 
                 st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         
-        # 🔥 중요: st.divider()가 for문 '안쪽'에 있어야 종목마다 줄이 생깁니다!
         st.divider()
-# --- [5. 메모장] ---
+# 5.메모장
 m1, m2 = st.columns([4, 1])
 with m1: st.text_area("메모장", placeholder="텍스트를 입력해보세요... 삼떡기", height=100)
 with m2: 
