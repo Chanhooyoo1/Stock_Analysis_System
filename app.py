@@ -38,7 +38,7 @@ def refresh_soopeh_token():
             pw_field = driver.find_element(By.CSS_SELECTOR, "input[type='password']")
             
         # ★★★ 여기에 실제 비밀번호를 입력하세요 ★★★
-        pw_field.send_keys("실제비밀번호입력") 
+        pw_field.send_keys("koreaCHY1488@!") 
         pw_field.send_keys(Keys.ENTER)
         
         time.sleep(7) # 로그인 처리 및 쿠키 생성 대기 (넉넉하게)
