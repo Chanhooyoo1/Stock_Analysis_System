@@ -29,7 +29,7 @@ def refresh_soopeh_token():
         pw_field = driver.find_element(By.CSS_SELECTOR, "input[type='password']")
         
         # ★ 찬후님 비밀번호 입력 ★
-        pw_field.send_keys("koreaCHY1488@!") 
+        pw_field.send_keys("실제비밀번호입력") 
         pw_field.send_keys(Keys.ENTER)
         
         time.sleep(7) 
@@ -79,4 +79,42 @@ def get_soopeh_only_nvda():
     return "API_ERROR"
 
 # --- [3. 디자인 및 레이아웃 (찬후님 원본)] ---
-st.set_page_config(page_
+st.set_page_config(page_title="수페 API 실시간 모니터링", page_icon="📈", layout="wide")
+
+# CSS 생략 (찬후님 원본 그대로 사용하세요)
+st_autorefresh(interval=30000, key="auto_refresh_key")
+
+with st.sidebar:
+    st.header("모니터링 설정")
+    selected_names = st.multiselect("종목 선택", ["엔비디아 (NVDA)"], default=["엔비디아 (NVDA)"])
+    if st.button("새로고침 (수동)", use_container_width=True):
+        st.rerun()
+
+st.markdown('<p class="main-title">주식 추세 일람 그래프</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-title">𝕾𝖔𝖔𝖕𝖊𝖍 𝕬𝕻𝕴 𝕯𝖎𝖗𝖊𝖈𝖙 𝕮𝖔𝖓𝖓𝖊𝖈𝖙𝖎𝖔𝖓</p>', unsafe_allow_html=True)
+
+if selected_names:
+    cols = st.columns(len(selected_names))
+    for i, name in enumerate(selected_names):
+        with cols[i]:
+            # --- 수페 데이터만 출력 ---
+            result = get_soopeh_only_nvda()
+            
+            if isinstance(result, dict):
+                st.metric(label=f"{name} (Soopeh Live)", value=f"${result['curr']:,.2f}", delta=f"{result['perc']:+.2f}%")
+                
+                # 그래프는 흐름을 보기 위해 yfinance에서 1분봉 데이터를 빌려오되, 현재가는 수페를 따름
+                data = yf.Ticker("NVDA").history(period="1d", interval="1m")
+                if not data.empty:
+                    fig = go.Figure()
+                    fig.add_trace(go.Scatter(x=data.index, y=data['Close'], fill='tozeroy', mode='lines', line=dict(color="#FF4B4B", width=4)))
+                    fig.update_layout(margin=dict(l=0, r=0, t=10, b=0), height=300, template="plotly_dark", paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+                    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+            
+            elif result == "LOGIN_FAILED":
+                st.error("❌ 수페 자동 로그인 실패! 비밀번호를 확인하세요.")
+            else:
+                st.error("❌ 수페 API 응답 없음 (서버 점검 중일 수 있음)")
+
+st.divider()
+st.text_area("메모장", placeholder="수페 API 연동 테스트 중..", height=120)
