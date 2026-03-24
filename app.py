@@ -122,7 +122,7 @@ with st.sidebar:
         "넷플릭스(NFLX)": {"id": "NFLX", "type": "US", "y": "NFLX"},
         "SK 하이닉스 (Hynix)": {"id": "000660", "type": "KR", "y": "000660.KS"},
         "LG전자(LEC)": {"id": "066570", "type": "KR", "y": "066570.KS"}
-       
+       m"엔비디아 (NVDA)": {"id": "NVDA", "type": "US", "y": "NVDA"}
     }
     selected_names = st.multiselect("종목 선택", list(stock_dict.keys()))
     period_map = {"1주일": "7d", "1개월": "1mo", "3개월": "3mo", "1년": "1y"}
