@@ -135,8 +135,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 2. 실제 화면에 렌더링되는 타이틀 섹션
-st.markdown('<div class="main-title">QUANTUM MONITOR</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Real-time Stock Intelligence System</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-title">실시간 외국-국내 주식 모니터링 시스템</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">𝕽𝖊𝖆𝖑-𝖙𝖎𝖒𝖊 𝕾𝖙𝖔𝖈𝖐 𝕴𝖓𝖙𝖊𝖑𝖑𝖎𝖌𝖊𝖓𝖈𝖊 𝕾𝖞𝖘𝖙𝖊𝖒</div>', unsafe_allow_html=True)
 st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
 
 # --- 그다음 st_autorefresh 등이 오면 됩니다 ---
