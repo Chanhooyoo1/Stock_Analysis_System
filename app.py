@@ -38,47 +38,92 @@ def get_google_stock_news(limit=10):
             results.append({"title": title.strip(), "link": entry.link})
         return results
     except: return []
-# 1. 스타일 정의 (기존 스타일 유지 및 보완)
-    st.markdown("""
-        <style>
-        /* 메인 타이틀: 그라데이션 및 애니메이션 효과 */
-        .main-title {
-            font-size: 45px !important; 
-            font-weight: 900 !important;
-            background: linear-gradient(135deg, #FF4B4B, #764BA2);
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent;
-            text-align: center; 
-            margin-top: -20px;
-            margin-bottom: 5px;
-            letter-spacing: -1px;
-        }
-        
-        /* 서브 타이틀: 깔끔한 폰트와 간격 */
-        .sub-title {
-            font-size: 16px !important; 
-            font-weight: 300 !important; 
-            color: #BBBBBB !important;
-            text-align: center; 
-            margin-bottom: 40px; 
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
 
-        /* 구분선 스타일 */
-        .custom-divider {
-            height: 2px;
-            background: linear-gradient(to right, transparent, #FF4B4B, #764BA2, transparent);
-            margin-bottom: 30px;
-            opacity: 0.5;
-        }
-        </style>
+# 페이지 디자인, 설정
+st.set_page_config(page_title="주식 실시간 모니터링 시스템", page_icon="📈", layout="wide")
+
+st.markdown("""
+    <style>
+   /* 일반 버튼 스타일 */
+div.stButton > button {
+    width: 100%; 
+    border-radius: 10px; 
+    background: linear-gradient(135deg, #FF4B4B, #764BA2);
+    color: white !important; 
+    font-weight: 700; 
+    border: none; 
+    padding: 10px;
+    transition: all 0.3s ease; /* 부드러운 전환 효과 추가 */
+}
+
+/*  버튼 호버(마우스 올렸을 때) 효과 */
+div.stButton > button:hover {
+    background: linear-gradient(135deg, #FF6B6B, #8E5ACD) !important; /* 색상을 살짝 밝게 */
+    transform: translateY(-2px); /* 위로 살짝 떠오르는 효과 */
+    box-shadow: 0 4px 15px rgba(255, 75, 75, 0.4); /* 그림자 강조 */
+    border: none !important;
+    color: white !important;
+}
+
+/* 버튼 클릭 시 효과 */
+div.stButton > button:active {
+    transform: translateY(0px);
+}
+    
+    /* 메인 타이틀 */
+    .main-title {
+        font-size: 40px !important; font-weight: 900 !important;
+        background: linear-gradient(135deg, #FF4B4B, #764BA2);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        text-shadow: 2px 2px 8px rgba(255, 75, 75, 0.4); text-align: center; margin-bottom: 5px;
+    }
+    
+    /* 서브 타이틀 */
+    .sub-title {
+        font-size: 14px !important; font-weight: 400 !important; color: #888888 !important;
+        text-align: center; margin-bottom: 35px; letter-spacing: 1px;
+    }
+    
+    /* 일반 버튼 스타일 */
+    div.stButton > button {
+        width: 100%; border-radius: 10px; background: linear-gradient(135deg, #FF4B4B, #764BA2);
+        color: white !important; font-weight: 700; border: none; padding: 10px;
+    }
+    
+    /* 메트릭(가격표) 박스 */
+    [data-testid="stMetric"] { background-color: #1e1e1e; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+    
+    /* 뉴스 리스트 스타일 */
+    .news-item { font-size: 13px; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+    .news-link { color: #FF4B4B; text-decoration: none; font-weight: 500; }
+
+    /* 🔥 [추가] 모바일 사이드바 열기 버튼(삼선메뉴) 크게 만들기 */
+    button[data-testid="stSidebarCollapseButton"] {
+        width: 55px !important;
+        height: 55px !important;
+        background-color: rgba(255, 75, 75, 0.15) !important; /* 살짝 붉은 배경으로 강조 */
+        border-radius: 12px !important;
+        margin-top: 5px !important;
+    }
+
+    /* 버튼 안의 아이콘(☰) 크기 및 색상 */
+    button[data-testid="stSidebarCollapseButton"] svg {
+        width: 32px !important;
+        height: 32px !important;
+        fill: #FF4B4B !important;
+    }
+
+    /* 사이드바 안의 닫기 버튼(X)도 누르기 편하게 조절 */
+    button[data-testid="stSidebarCloseButton"] {
+        width: 45px !important;
+        height: 45px !important;
+    }
+    </style>
     """, unsafe_allow_html=True)
+# 스타일 정의가 끝나는 지점(unsafe_allow_html=True) 바로 아래에 추가하세요!
+st.markdown('<div class="sub-title">실시간 주식 종목 일람 시스템</div>', unsafe_allow_html=True)
+st.markdown('<div class="𝕽𝖊𝖆𝖑-𝖙𝖎𝖒𝖊 𝖘𝖙𝖔𝖈𝖐 𝖑𝖎𝖘𝖙𝖎𝖓𝖌 𝖘𝖞𝖘𝖙𝖊𝖒"></div>', unsafe_allow_html=True)
 
-    # 2. 실제 화면에 표시될 타이틀 섹션 (여기에 넣으세요!)
-    st.markdown('<div class="main-title">QUANTUM MONITOR</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">Real-time Stock Intelligence System</div>', unsafe_allow_html=True)
-    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
 # 그 아래에 기존에 있던 st_autorefresh 등이 오면 됩니다.
 st_autorefresh(interval=60000, key="final_refresh_timer")
 # 3. 사이드바
