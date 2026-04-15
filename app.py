@@ -160,6 +160,28 @@ input[type="reset"]:hover{
 			0 0 70px rgba(153,51,255,.3);
 	}
 }
+/* 기본(인게임 포함): 넓게 */
+.ChatBox{
+	width: 1000px !important;
+}
+
+/* 로비(미박스가 있는 화면)만 축소 */
+.MeBox ~ .ChatBox{
+	width: 790px !important;
+}
+
+/* 인게임(GameBox가 보이는 구간)에서는 다시 확장 */
+.GameBox ~ .ChatBox{
+	width: 1000px !important;
+}
+
+/* 입력칸은 너비 자동 계산 유지 */
+#Talk{
+	width: calc(100% - 50px) !important;
+}
+#ChatBtn{
+	width: 50px !important;
+}
 
 
 # 기사 가져오는 엔진
