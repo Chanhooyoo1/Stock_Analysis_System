@@ -14,87 +14,102 @@ from streamlit_autorefresh import st_autorefresh
  * - ChatBox: 790px
  * - 모든 버튼: 빨강-보라 그라데이션 + hover
  * 이 코드를 기존 CSS 맨 아래에 그대로 추가하세요.
- */
+/* =========================
+   정리본: 메뉴 유지 + 네온 테두리
+   ========================= */
 
-/* ===== 1) Layout Sync ===== */
-.MeBox{
-	width: 220px !important;
-	height: 200px !important;
-}
-
-.UserListBox{
-	width: 220px !important;
-	height: 360px !important;
-}
-.UserListBox .product-body{
-	width: 210px !important;
-	height: 330px !important;
-}
-.users-item{
-	width: 210px !important;
+/* 공통 네온 변수 */
+:root{
+	--neon-pink: rgba(255, 51, 102, 0.65);
+	--neon-purple: rgba(153, 51, 255, 0.55);
+	--btn-grad: linear-gradient(135deg, #ff3366, #9933ff);
 }
 
-.RoomListBox{
-	width: 790px !important;
-	height: 360px !important;
-}
+/* 1) 요청한 레이아웃 크기 */
+.MeBox{ width: 220px !important; }
+
+.UserListBox{ width: 220px !important; }
+.UserListBox .product-body,
+.users-item{ width: 210px !important; }
+
+.RoomListBox{ width: 790px !important; }
 .RoomListBox .product-body{
 	width: 780px !important;
-	height: 330px !important; /* 기존 height: px; 오류 보정 */
+	height: 330px !important;
 }
 
-/* 같은 폭 유지용 (선택) */
-.ShopBox{
-	width: 790px !important;
-}
-.ShopBox .product-body{
-	width: 780px !important;
-}
-
-/* ===== 2) Chat Width ===== */
-.ChatBox{
-	width: 790px !important;
-}
-#Chat{
-	width: 100% !important;
-}
-#Talk{
-	width: calc(100% - 50px) !important;
-	height: 25px !important;
-}
+.ChatBox{ width: 790px !important; }
+#Talk{ width: calc(100% - 50px) !important; }
 #ChatBtn{
 	width: 50px !important;
 	height: 25px !important;
 }
 
-/* ===== 3) Global Button Theme ===== */
-/* closeBtn 제외: 원형 닫기 버튼 유지 */
-button:not(.closeBtn),
+/* 2) 메뉴 제외 버튼 테마 + 네온 */
+button:not(.closeBtn):not(.menu-btn):not(.menu-sub-btn),
 input[type="button"],
 input[type="submit"],
 input[type="reset"]{
-	background: linear-gradient(135deg, #ff3366, #9933ff) !important;
+	background: var(--btn-grad) !important;
 	color: #fff !important;
-	border: none !important;
+	border: 1px solid rgba(255,255,255,0.18) !important;
+	box-shadow:
+		0 0 8px var(--neon-pink),
+		0 0 16px var(--neon-purple),
+		inset 0 0 6px rgba(255,255,255,0.12);
 	transition: all .25s ease !important;
 }
 
-button:not(.closeBtn):hover,
+button:not(.closeBtn):not(.menu-btn):not(.menu-sub-btn):hover,
 input[type="button"]:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover{
-	filter: brightness(1.12) saturate(1.06);
+	filter: brightness(1.12);
 	transform: translateY(-1px);
-	box-shadow: 0 0 12px rgba(255,51,102,.45), 0 0 18px rgba(153,51,255,.35);
+	box-shadow:
+		0 0 12px var(--neon-pink),
+		0 0 24px var(--neon-purple),
+		inset 0 0 10px rgba(255,255,255,0.2);
 }
 
-/* 기존 hover 규칙 덮어쓰기 보강 */
-.kkutu-menu button:hover,
-.tail-button button:hover,
-#ChatBtn:hover,
-.game-replay-controller button:hover{
-	background: linear-gradient(135deg, #ff3366, #9933ff) !important;
-	color: #fff !important;
+/* 3) 메뉴 버튼은 기존 색/호버 유지 */
+.kkutu-menu button,
+#Top .menu-btn,
+#Top .menu-sub-btn{
+	box-shadow: none !important;
+}
+
+/* 4) 박스 테두리 네온 퍼짐 */
+.Product,
+.dialog,
+.UserListBox,
+.RoomListBox,
+.ShopBox,
+.RoomBox,
+.GameBox,
+.MeBox,
+.ChatBox,
+.ADBox{
+	border: 1px solid rgba(255,255,255,0.16) !important;
+	box-shadow:
+		0 0 10px rgba(255, 51, 102, 0.22),
+		0 0 18px rgba(153, 51, 255, 0.18),
+		inset 0 0 8px rgba(255,255,255,0.05);
+}
+
+.Product:hover,
+.dialog:hover,
+.UserListBox:hover,
+.RoomListBox:hover,
+.ShopBox:hover,
+.RoomBox:hover,
+.GameBox:hover,
+.MeBox:hover,
+.ChatBox:hover{
+	box-shadow:
+		0 0 14px rgba(255, 51, 102, 0.35),
+		0 0 26px rgba(153, 51, 255, 0.3),
+		inset 0 0 10px rgba(255,255,255,0.08);
 }
 
 # 기사 가져오는 엔진
