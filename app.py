@@ -197,42 +197,94 @@ body.game .ChatBox{
 
 #Talk{ width: calc(100% - 50px) !important; }
 #ChatBtn{ width: 50px !important; }
-/* 1) 공통: 버튼이 각자 변수값을 쓰도록 */
-#Top .menu-btn,
-.kkutu-menu button{
-  background: var(--tab-bg, rgba(255,255,255,0.2)) !important;
-  color: var(--tab-fg, #fff) !important;
-  border-color: var(--tab-bd, transparent) !important;
+/* =========================================
+   버튼 개별 그라데이션 시스템
+   대상: Spectate/SetRoom/NewRoom/QuickRoom/Shop/Dictionary/Invite/Practice/Ready/Start/Replay
+   ========================================= */
+
+/* 1) 공통 적용 규칙 (각 버튼이 자기 변수 사용) */
+#SpactateBtn, #SetRoomBtn, #NewRoomBtn, #QuickRoomBtn, #ShopBtn, #DictionaryBtn,
+#InviteBtn, #PracticeBtn, #ReadyBtn, #StartBtn, #ReplayBtn{
+  background: var(--btn-grad, linear-gradient(135deg, #ff3366, #9933ff)) !important;
+  color: var(--btn-fg, #fff) !important;
+  border: 1px solid var(--btn-border, rgba(255,255,255,.18)) !important;
+  transition: all .25s ease !important;
+  box-shadow: 0 0 8px rgba(255,51,102,.28), 0 0 14px rgba(153,51,255,.22);
 }
 
-#Top .menu-btn:hover,
-.kkutu-menu button:hover{
-  background: var(--tab-hover-bg, linear-gradient(135deg, #ff3366, #9933ff)) !important;
-  color: var(--tab-hover-fg, #fff) !important;
+#SpactateBtn:hover, #SetRoomBtn:hover, #NewRoomBtn:hover, #QuickRoomBtn:hover, #ShopBtn:hover, #DictionaryBtn:hover,
+#InviteBtn:hover, #PracticeBtn:hover, #ReadyBtn:hover, #StartBtn:hover, #ReplayBtn:hover{
+  background: var(--btn-hover-grad, linear-gradient(135deg, #ff4d7a, #a64dff)) !important;
+  color: var(--btn-hover-fg, #fff) !important;
+  box-shadow: 0 0 12px rgba(255,51,102,.45), 0 0 22px rgba(153,51,255,.35);
+  transform: translateY(-1px);
 }
 
-/* 선택됨(토글) 상태도 탭별 변수 사용 */
-.kkutu-menu .toggled{
-  background: var(--tab-active-bg, #444) !important;
-  color: var(--tab-active-fg, #fff) !important;
+/* 토글/활성 상태 */
+#SpactateBtn.toggled, #SetRoomBtn.toggled, #NewRoomBtn.toggled, #QuickRoomBtn.toggled, #ShopBtn.toggled, #DictionaryBtn.toggled,
+#InviteBtn.toggled, #PracticeBtn.toggled, #ReadyBtn.toggled, #StartBtn.toggled, #ReplayBtn.toggled,
+#SpactateBtn.active, #SetRoomBtn.active, #NewRoomBtn.active, #QuickRoomBtn.active, #ShopBtn.active, #DictionaryBtn.active,
+#InviteBtn.active, #PracticeBtn.active, #ReadyBtn.active, #StartBtn.active, #ReplayBtn.active{
+  background: var(--btn-active-grad, linear-gradient(135deg, #d12b55, #7f2ed1)) !important;
+  color: var(--btn-active-fg, #fff) !important;
 }
-/* 2) 탭별 색 지정 예시 (ID가 있으면 ID로 지정) */
+
+/* 2) 버튼별 그라데이션 정의 (원하는 색으로 바꾸면 됨) */
+#SpactateBtn{
+  --btn-grad: linear-gradient(135deg, #3a7bd5, #3a6073);
+  --btn-hover-grad: linear-gradient(135deg, #4b8ff0, #4b7f96);
+  --btn-active-grad: linear-gradient(135deg, #2e62aa, #304f5e);
+}
+#SetRoomBtn{
+  --btn-grad: linear-gradient(135deg, #ff5f6d, #ffc371);
+  --btn-hover-grad: linear-gradient(135deg, #ff7380, #ffd18d);
+  --btn-active-grad: linear-gradient(135deg, #e14b59, #e0ab5f);
+}
+#NewRoomBtn{
+  --btn-grad: linear-gradient(135deg, #11998e, #38ef7d);
+  --btn-hover-grad: linear-gradient(135deg, #17b3a6, #51ff98);
+  --btn-active-grad: linear-gradient(135deg, #0e7f76, #2fc967);
+}
+#QuickRoomBtn{
+  --btn-grad: linear-gradient(135deg, #fc466b, #3f5efb);
+  --btn-hover-grad: linear-gradient(135deg, #ff5b7f, #5571ff);
+  --btn-active-grad: linear-gradient(135deg, #d83a5a, #344ed4);
+}
+#ShopBtn{
+  --btn-grad: linear-gradient(135deg, #f7971e, #ffd200);
+  --btn-hover-grad: linear-gradient(135deg, #ffab3d, #ffe14f);
+  --btn-active-grad: linear-gradient(135deg, #d38218, #d9b300);
+}
+#DictionaryBtn{
+  --btn-grad: linear-gradient(135deg, #8e2de2, #4a00e0);
+  --btn-hover-grad: linear-gradient(135deg, #a045f0, #6330ff);
+  --btn-active-grad: linear-gradient(135deg, #7423bb, #3e00bb);
+}
+#InviteBtn{
+  --btn-grad: linear-gradient(135deg, #00c6ff, #0072ff);
+  --btn-hover-grad: linear-gradient(135deg, #27d4ff, #2c87ff);
+  --btn-active-grad: linear-gradient(135deg, #00a7d9, #0060d6);
+}
+#PracticeBtn{
+  --btn-grad: linear-gradient(135deg, #56ab2f, #a8e063);
+  --btn-hover-grad: linear-gradient(135deg, #68bf3d, #b9ee78);
+  --btn-active-grad: linear-gradient(135deg, #4a9628, #93c957);
+}
+#ReadyBtn{
+  --btn-grad: linear-gradient(135deg, #ff3366, #9933ff);
+  --btn-hover-grad: linear-gradient(135deg, #ff4d7a, #ad4dff);
+  --btn-active-grad: linear-gradient(135deg, #d62a55, #7f2bd1);
+}
 #StartBtn{
-  --tab-bg: #1f8bff;
-  --tab-hover-bg: linear-gradient(135deg, #35a2ff, #6c63ff);
-  --tab-active-bg: #0f6cd1;
+  --btn-grad: linear-gradient(135deg, #ff512f, #dd2476);
+  --btn-hover-grad: linear-gradient(135deg, #ff6c4c, #f03c8d);
+  --btn-active-grad: linear-gradient(135deg, #d9472a, #bc1f63);
 }
-
-#ExitBtn{
-  --tab-bg: #ff4d4f;
-  --tab-hover-bg: linear-gradient(135deg, #ff6b6b, #ff3366);
-  --tab-active-bg: #d9363e;
+#ReplayBtn{
+  --btn-grad: linear-gradient(135deg, #1d976c, #93f9b9);
+  --btn-hover-grad: linear-gradient(135deg, #24b080, #a9ffd0);
+  --btn-active-grad: linear-gradient(135deg, #187c58, #7ed6a0);
 }
-
-/* ID가 없으면 순서로도 가능 */
-.kkutu-menu button:nth-child(1){ --tab-bg:#2a2f45; --tab-hover-bg:#3b4266; }
-.kkutu-menu button:nth-child(2){ --tab-bg:#245a3a; --tab-hover-bg:#2f7a4d; }
-.kkutu-menu button:nth-child(3){ --tab-bg:#6a3f1f; --tab-hover-bg:#8c542a; }
 
 
 # 기사 가져오는 엔진
