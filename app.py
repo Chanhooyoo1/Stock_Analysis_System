@@ -896,4 +896,14 @@ body{
 #InviteBtn.active, #PracticeBtn.active, #ReadyBtn.active, #StartBtn.active, #ReplayBtn.active, #ExitBtn.active{
   background: var(--btn-active-grad, linear-gradient(135deg, #d12b55, #7f2ed1)) !important;
   color: var(--btn-active-fg, var(--ui-btn-active-fg)) !important;
+													 
+}
+body{
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(170,70,255,.22), transparent 60%),
+    radial-gradient(1000px 600px at 85% 90%, rgba(255,80,170,.18), transparent 60%),
+    linear-gradient(160deg, #12071f 0%, #1a0c2e 45%, #12071f 100%) !important;
+}
+.Product, .dialog, .UserListBox, .RoomListBox, .ShopBox, .RoomBox, .GameBox, .MeBox, .ChatBox, .ADBox{
+  background: linear-gradient(160deg, rgba(40,18,62,.82), rgba(28,12,45,.82)) !important;
 }
