@@ -324,6 +324,27 @@ body.game .ChatBox{
   --btn-transition: all .45s ease-in-out;
   --btn-hover-transform: translateY(-2px) scale(1.01);
 }
+/* 대상 버튼 목록에 나가기 버튼 추가 */
+#SpactateBtn, #SetRoomBtn, #NewRoomBtn, #QuickRoomBtn, #ShopBtn, #DictionaryBtn,
+#InviteBtn, #PracticeBtn, #ReadyBtn, #StartBtn, #ReplayBtn, #ExitBtn{
+  transition: var(--btn-transition, var(--ui-transition)) !important;
+  background: var(--btn-grad, linear-gradient(135deg, #ff3366, #9933ff)) !important;
+}
+
+/* hover에도 추가 */
+#SpactateBtn:hover, #SetRoomBtn:hover, #NewRoomBtn:hover, #QuickRoomBtn:hover, #ShopBtn:hover, #DictionaryBtn:hover,
+#InviteBtn:hover, #PracticeBtn:hover, #ReadyBtn:hover, #StartBtn:hover, #ReplayBtn:hover, #ExitBtn:hover{
+  transform: var(--btn-hover-transform, var(--ui-hover-transform));
+  filter: var(--btn-hover-filter, var(--ui-hover-filter));
+  background: var(--btn-hover-grad, linear-gradient(135deg, #ff4d7a, #ad4dff)) !important;
+}
+
+/* 나가기 버튼 개별 그라데이션 */
+#ExitBtn{
+  --btn-grad: linear-gradient(135deg, #ff416c, #ff4b2b);
+  --btn-hover-grad: linear-gradient(135deg, #ff5c82, #ff6848);
+  --btn-active-grad: linear-gradient(135deg, #d9365a, #d93f25);
+}
 
 # 기사 가져오는 엔진
 def get_naver_stock(code):
