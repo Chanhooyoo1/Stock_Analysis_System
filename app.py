@@ -1002,3 +1002,189 @@ body{
 .UserListBox, .RoomListBox, .MeBox, .ChatBox{
   position: relative;
 }
+									 
+/* =========================================
+   최종 정리본
+   - 다크 보라 그라데이션 배경
+   - 약한 정적 네온
+   - 창끼리 연결 브릿지
+   - 버튼 개별 그라데이션/글자색/트랜지션 상속
+   ========================================= */
+
+:root{
+  /* 공통 트랜지션 */
+  --ui-transition: all .25s linear;
+  --ui-hover-transform: translateY(-1px);
+  --ui-hover-filter: brightness(1.12);
+
+  /* 공통 버튼 글자색 */
+  --ui-btn-fg: #fff;
+  --ui-btn-hover-fg: #fff;
+  --ui-btn-active-fg: #fff7ff;
+
+  /* 배경/패널 */
+  --bg-dark-purple: #0e0818;
+  --panel-dark-purple: rgba(22, 12, 34, 0.82);
+  --panel-dark-purple-soft: rgba(28, 14, 44, 0.72);
+
+  /* 약한 네온 */
+  --neon-weak-pink: rgba(255, 90, 180, 0.16);
+  --neon-weak-purple: rgba(160, 90, 255, 0.14);
+
+  /* 창 연결 라인 */
+  --link-line: rgba(180, 120, 255, 0.22);
+  --link-glow: rgba(255, 90, 180, 0.16);
+}
+
+/* 배경 */
+html, body{
+  background-color: var(--bg-dark-purple) !important;
+}
+body{
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(170,70,255,.22), transparent 60%),
+    radial-gradient(1000px 600px at 85% 90%, rgba(255,80,170,.18), transparent 60%),
+    linear-gradient(160deg, #12071f 0%, #1a0c2e 45%, #12071f 100%) !important;
+  color: #eee !important;
+}
+
+/* 패널 공통 */
+.Product, .dialog, .UserListBox, .RoomListBox, .ShopBox, .RoomBox, .GameBox, .MeBox, .ChatBox, .ADBox{
+  background: linear-gradient(160deg, var(--panel-dark-purple), rgba(16, 9, 27, 0.84)) !important;
+  border: 1px solid rgba(220, 180, 255, 0.14) !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 0 8px var(--neon-weak-pink),
+    0 0 14px var(--neon-weak-purple) !important;
+}
+.rooms-item{
+  background-color: var(--panel-dark-purple-soft) !important;
+}
+
+/* 외곽 네온(정적) */
+#Wrap, #kkutu-wrap{
+  position: relative;
+  overflow: visible !important;
+}
+#Wrap::after, #kkutu-wrap::after{
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 140, 220, 0.28) !important;
+  box-shadow:
+    0 0 10px rgba(255, 90, 180, 0.18),
+    0 0 20px rgba(140, 90, 255, 0.14) !important;
+  animation: none !important;
+  opacity: .8 !important;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 창 연결감 */
+.UserListBox, .RoomListBox, .MeBox, .ChatBox, .RoomBox, .GameBox{
+  position: relative;
+}
+.UserListBox + .RoomListBox,
+.MeBox + .ChatBox,
+.RoomBox + .ChatBox,
+.GameBox + .ChatBox{
+  margin-left: 4px !important;
+}
+.UserListBox + .RoomListBox::before,
+.MeBox + .ChatBox::before,
+.RoomBox + .ChatBox::before,
+.GameBox + .ChatBox::before{
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 12px;
+  width: 6px;
+  height: calc(100% - 24px);
+  background: linear-gradient(to bottom, transparent, var(--link-line), transparent);
+  box-shadow: 0 0 8px var(--link-glow);
+  pointer-events: none;
+}
+
+/* 버튼 트랜지션 상속 오버라이드 */
+#Wrap{ --ui-transition: all .35s linear; }
+.GameBox{ --ui-transition: all .18s ease-out; }
+
+/* 버튼 공통 대상 */
+#SpactateBtn, #SpectateBtn, #SetRoomBtn, #NewRoomBtn, #QuickRoomBtn, #ShopBtn, #DictionaryBtn,
+#InviteBtn, #PracticeBtn, #ReadyBtn, #StartBtn, #ReplayBtn, #ExitBtn{
+  transition: var(--btn-transition, var(--ui-transition)) !important;
+  background: var(--btn-grad, linear-gradient(135deg, #cf0034, #200040)) !important;
+  color: var(--btn-fg, var(--ui-btn-fg)) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  box-shadow: 0 0 8px rgba(255,51,102,.28), 0 0 14px rgba(153,51,255,.22);
+}
+#SpactateBtn:hover, #SpectateBtn:hover, #SetRoomBtn:hover, #NewRoomBtn:hover, #QuickRoomBtn:hover, #ShopBtn:hover, #DictionaryBtn:hover,
+#InviteBtn:hover, #PracticeBtn:hover, #ReadyBtn:hover, #StartBtn:hover, #ReplayBtn:hover, #ExitBtn:hover{
+  transform: var(--btn-hover-transform, var(--ui-hover-transform));
+  filter: var(--btn-hover-filter, var(--ui-hover-filter));
+  background: var(--btn-hover-grad, linear-gradient(135deg, #ff4d7a, #ad4dff)) !important;
+  color: var(--btn-hover-fg, var(--ui-btn-hover-fg)) !important;
+}
+#SpactateBtn.toggled, #SpectateBtn.toggled, #SetRoomBtn.toggled, #NewRoomBtn.toggled, #QuickRoomBtn.toggled, #ShopBtn.toggled, #DictionaryBtn.toggled,
+#InviteBtn.toggled, #PracticeBtn.toggled, #ReadyBtn.toggled, #StartBtn.toggled, #ReplayBtn.toggled, #ExitBtn.toggled,
+#SpactateBtn.active, #SpectateBtn.active, #SetRoomBtn.active, #NewRoomBtn.active, #QuickRoomBtn.active, #ShopBtn.active, #DictionaryBtn.active,
+#InviteBtn.active, #PracticeBtn.active, #ReadyBtn.active, #StartBtn.active, #ReplayBtn.active, #ExitBtn.active{
+  background: var(--btn-active-grad, linear-gradient(135deg, #d12b55, #7f2ed1)) !important;
+  color: var(--btn-active-fg, var(--ui-btn-active-fg)) !important;
+}
+
+/* 버튼별 커스텀 */
+#SpectateBtn, #SpactateBtn{
+  --btn-grad: linear-gradient(135deg, #f83939, #ac33e3);
+  --btn-hover-grad: linear-gradient(135deg, #ff6262, #be57ef);
+}
+#SetRoomBtn{
+  --btn-grad: linear-gradient(135deg, #ab33e4, #80bfe6);
+  --btn-hover-grad: linear-gradient(135deg, #c457f3, #9fd1ef);
+}
+#NewRoomBtn{
+  --btn-grad: linear-gradient(135deg, #fb2525, #b800ff);
+  --btn-hover-grad: linear-gradient(135deg, #ff4f4f, #cb43ff);
+}
+#QuickRoomBtn{
+  --btn-grad: linear-gradient(135deg, #2f71e9, #6f87ff);
+  --btn-hover-grad: linear-gradient(135deg, #4d86ef, #8a9dff);
+}
+#ShopBtn{
+  --btn-grad: linear-gradient(135deg, #ff8f01, #ffd200);
+  --btn-hover-grad: linear-gradient(135deg, #ffab3d, #ffe14f);
+}
+#DictionaryBtn{
+  --btn-grad: linear-gradient(135deg, #058300, #68d873);
+  --btn-hover-grad: linear-gradient(135deg, #1e9a1a, #87e892);
+}
+#InviteBtn{
+  --btn-grad: linear-gradient(135deg, #ab33e4, #d69ce3);
+  --btn-hover-grad: linear-gradient(135deg, #bd5ceb, #e3b8ec);
+}
+#PracticeBtn{
+  --btn-grad: linear-gradient(135deg, #d3dc00, #a6a600);
+  --btn-hover-grad: linear-gradient(135deg, #e5ea2a, #bfbf20);
+}
+#ReadyBtn{
+  --btn-grad: linear-gradient(135deg, #ff3366, #b56cff);
+  --btn-hover-grad: linear-gradient(135deg, #ff4d7a, #cc8bff);
+}
+#StartBtn{
+  --btn-grad: linear-gradient(135deg, #ff3939, #8d47ef);
+  --btn-hover-grad: linear-gradient(135deg, #ff6161, #a36bf3);
+  --btn-transition: all .15s linear;
+  --btn-hover-transform: translateY(-2px) scale(1.01);
+}
+#ReplayBtn{
+  --btn-grad: linear-gradient(135deg, #ff0000, #ff8383);
+  --btn-hover-grad: linear-gradient(135deg, #ff3636, #ffaaaa);
+}
+#ExitBtn{
+  --btn-grad: linear-gradient(135deg, #ff0000, #e75656);
+  --btn-hover-grad: linear-gradient(135deg, #ff3434, #ff7373);
+  --btn-fg: #fff;
+  --btn-hover-fg: #fff3f3;
+  --btn-active-fg: #ffdede;
+}
