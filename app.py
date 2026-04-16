@@ -286,6 +286,44 @@ body.game .ChatBox{
   --btn-active-grad: linear-gradient(135deg, #187c58, #7ed6a0);
 }
 
+/* =========================================
+   부모 -> 자식 트랜지션 상속 시스템
+   ========================================= */
+
+/* 1) 전역 기본값(부모) */
+:root{
+  --ui-transition: all .25s ease;
+  --ui-hover-transform: translateY(-1px);
+  --ui-hover-filter: brightness(1.12);
+}
+
+/* 2) 부모 컨테이너별 오버라이드 가능
+   예: 게임방에서만 더 느리게 */
+#Wrap{
+  --ui-transition: all .35s cubic-bezier(.22,.61,.36,1);
+}
+.GameBox{
+  --ui-transition: all .18s ease-out;
+}
+
+/* 3) 대상 버튼들: 부모 변수 사용 */
+#SpactateBtn, #SetRoomBtn, #NewRoomBtn, #QuickRoomBtn, #ShopBtn, #DictionaryBtn,
+#InviteBtn, #PracticeBtn, #ReadyBtn, #StartBtn, #ReplayBtn{
+  transition: var(--btn-transition, var(--ui-transition)) !important;
+}
+
+/* 4) hover도 부모 변수 사용 */
+#SpactateBtn:hover, #SetRoomBtn:hover, #NewRoomBtn:hover, #QuickRoomBtn:hover, #ShopBtn:hover, #DictionaryBtn:hover,
+#InviteBtn:hover, #PracticeBtn:hover, #ReadyBtn:hover, #StartBtn:hover, #ReplayBtn:hover{
+  transform: var(--btn-hover-transform, var(--ui-hover-transform));
+  filter: var(--btn-hover-filter, var(--ui-hover-filter));
+}
+
+/* 5) 버튼 개별 커스텀도 가능 */
+#StartBtn{
+  --btn-transition: all .45s ease-in-out;
+  --btn-hover-transform: translateY(-2px) scale(1.01);
+}
 
 # 기사 가져오는 엔진
 def get_naver_stock(code):
