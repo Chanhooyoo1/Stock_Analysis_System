@@ -825,3 +825,75 @@ body{
   opacity: 0.8 !important;
 }
 
+/* =========================================
+   버튼 + 다크보라 배경 + 약한 정적 네온 (정리본)
+   ========================================= */
+
+/* 전역 변수 */
+:root{
+  --ui-transition: all .25s linear;
+  --ui-hover-transform: translateY(-1px);
+  --ui-hover-filter: brightness(1.12);
+
+  --ui-btn-fg: #fff;
+  --ui-btn-hover-fg: #fff;
+  --ui-btn-active-fg: #fff7ff;
+
+  --bg-dark-purple: #140a22;
+  --panel-dark-purple: rgba(36, 18, 56, 0.78);
+  --panel-dark-purple-soft: rgba(28, 14, 44, 0.72);
+  --neon-weak-pink: rgba(255, 90, 180, 0.16);
+  --neon-weak-purple: rgba(160, 90, 255, 0.14);
+}
+
+/* 배경 강제 */
+html, body{
+  background-color: var(--bg-dark-purple) !important;
+}
+body{
+  background-image:
+    radial-gradient(ellipse 70% 50% at 20% 10%, rgba(120,40,190,0.16) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 45% at 80% 85%, rgba(80,30,160,0.14) 0%, transparent 70%) !important;
+  color: #eee !important;
+}
+
+/* 패널 공통 */
+.Product, .dialog, .UserListBox, .RoomListBox, .ShopBox, .RoomBox, .GameBox, .MeBox, .ChatBox, .ADBox{
+  background-color: var(--panel-dark-purple) !important;
+  border: 1px solid rgba(220, 180, 255, 0.14) !important;
+  box-shadow: 0 0 8px var(--neon-weak-pink), 0 0 14px var(--neon-weak-purple) !important;
+}
+.rooms-item{
+  background-color: var(--panel-dark-purple-soft) !important;
+}
+
+/* 외곽 네온: 정적 */
+#Wrap::after, #kkutu-wrap::after{
+  border: 1px solid rgba(255, 140, 220, 0.28) !important;
+  box-shadow: 0 0 10px rgba(255, 90, 180, 0.18), 0 0 20px rgba(140, 90, 255, 0.14) !important;
+  animation: none !important;
+  opacity: .8 !important;
+}
+
+/* 버튼 공통 대상 */
+#SpactateBtn, #SpectateBtn, #SetRoomBtn, #NewRoomBtn, #QuickRoomBtn, #ShopBtn, #DictionaryBtn,
+#InviteBtn, #PracticeBtn, #ReadyBtn, #StartBtn, #ReplayBtn, #ExitBtn{
+  transition: var(--btn-transition, var(--ui-transition)) !important;
+  background: var(--btn-grad, linear-gradient(135deg, #cf0034, #9933ff)) !important;
+  color: var(--btn-fg, var(--ui-btn-fg)) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+}
+#SpactateBtn:hover, #SpectateBtn:hover, #SetRoomBtn:hover, #NewRoomBtn:hover, #QuickRoomBtn:hover, #ShopBtn:hover, #DictionaryBtn:hover,
+#InviteBtn:hover, #PracticeBtn:hover, #ReadyBtn:hover, #StartBtn:hover, #ReplayBtn:hover, #ExitBtn:hover{
+  transform: var(--btn-hover-transform, var(--ui-hover-transform));
+  filter: var(--btn-hover-filter, var(--ui-hover-filter));
+  background: var(--btn-hover-grad, linear-gradient(135deg, #ff4d7a, #ad4dff)) !important;
+  color: var(--btn-hover-fg, var(--ui-btn-hover-fg)) !important;
+}
+#SpactateBtn.toggled, #SpectateBtn.toggled, #SetRoomBtn.toggled, #NewRoomBtn.toggled, #QuickRoomBtn.toggled, #ShopBtn.toggled, #DictionaryBtn.toggled,
+#InviteBtn.toggled, #PracticeBtn.toggled, #ReadyBtn.toggled, #StartBtn.toggled, #ReplayBtn.toggled, #ExitBtn.toggled,
+#SpactateBtn.active, #SpectateBtn.active, #SetRoomBtn.active, #NewRoomBtn.active, #QuickRoomBtn.active, #ShopBtn.active, #DictionaryBtn.active,
+#InviteBtn.active, #PracticeBtn.active, #ReadyBtn.active, #StartBtn.active, #ReplayBtn.active, #ExitBtn.active{
+  background: var(--btn-active-grad, linear-gradient(135deg, #d12b55, #7f2ed1)) !important;
+  color: var(--btn-active-fg, var(--ui-btn-active-fg)) !important;
+}
