@@ -345,6 +345,41 @@ body.game .ChatBox{
   --btn-hover-grad: linear-gradient(135deg, #ff5c82, #ff6848);
   --btn-active-grad: linear-gradient(135deg, #d9365a, #d93f25);
 }
+/* 부모 기본값 */
+:root{
+  --ui-btn-fg: #ffffff;
+  --ui-btn-hover-fg: #ffffff;
+  --ui-btn-active-fg: #fff7ff;
+}
+
+/* 대상 버튼 공통 (글자색 변수 적용) */
+#SpactateBtn, #SetRoomBtn, #NewRoomBtn, #QuickRoomBtn, #ShopBtn, #DictionaryBtn,
+#InviteBtn, #PracticeBtn, #ReadyBtn, #StartBtn, #ReplayBtn, #ExitBtn{
+  color: var(--btn-fg, var(--ui-btn-fg)) !important;
+}
+
+#SpactateBtn:hover, #SetRoomBtn:hover, #NewRoomBtn:hover, #QuickRoomBtn:hover, #ShopBtn:hover, #DictionaryBtn:hover,
+#InviteBtn:hover, #PracticeBtn:hover, #ReadyBtn:hover, #StartBtn:hover, #ReplayBtn:hover, #ExitBtn:hover{
+  color: var(--btn-hover-fg, var(--ui-btn-hover-fg)) !important;
+}
+
+#SpactateBtn.toggled, #SetRoomBtn.toggled, #NewRoomBtn.toggled, #QuickRoomBtn.toggled, #ShopBtn.toggled, #DictionaryBtn.toggled,
+#InviteBtn.toggled, #PracticeBtn.toggled, #ReadyBtn.toggled, #StartBtn.toggled, #ReplayBtn.toggled, #ExitBtn.toggled,
+#SpactateBtn.active, #SetRoomBtn.active, #NewRoomBtn.active, #QuickRoomBtn.active, #ShopBtn.active, #DictionaryBtn.active,
+#InviteBtn.active, #PracticeBtn.active, #ReadyBtn.active, #StartBtn.active, #ReplayBtn.active, #ExitBtn.active{
+  color: var(--btn-active-fg, var(--ui-btn-active-fg)) !important;
+}
+#StartBtn{
+  --btn-fg: #fff;
+  --btn-hover-fg: #ffe9f6;
+  --btn-active-fg: #ffd2ec;
+}
+#ExitBtn{
+  --btn-fg: #fff;
+  --btn-hover-fg: #fff3f3;
+  --btn-active-fg: #ffdede;
+}
+
 
 # 기사 가져오는 엔진
 def get_naver_stock(code):
