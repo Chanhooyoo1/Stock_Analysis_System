@@ -150,6 +150,8 @@ with st.sidebar:
         "알파벳(구글) (GOOG)": {"id": "GOOG", "y": "GOOG"},
         "LG전자": {"id": "066570", "y": "066570.KS"},
         "넷플릭스 (NFLX)": {"id": "NFLX", "y": "NFLX"},
+        "테슬라 (TSLA)": {"id": "TSLA", "y": "TSLA"},
+        "두산에너빌리티": {"id": "034020", "y": "034020.KS"},
         "맥도날드": {"id": "MCD", "y": "MCD"}
 
     }
